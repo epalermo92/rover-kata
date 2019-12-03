@@ -1,6 +1,6 @@
 <?php
 
-use src\Models\AbstractDirection;
+namespace src\Models;
 
 class Command extends AbstractDirection
 {
@@ -14,38 +14,93 @@ class Command extends AbstractDirection
 
     public $command;
 
-    public $direction;
+    protected $rover;
 
-    protected function __construct(string $command, string $direction)
+    protected function __construct(string $command, Rover $rover )
     {
-        if(in_array($command, [self::RIGHT, self::LEFT, self::BACKWARD, self::FORWARD], true)) {
+        if ($this->checkCommand($command)){
             $this->command = $command;
-        }else{
-            throw new \InvalidArgumentException('The command' . $command .'is not valid. Available commands: F, B, L, R.' );
         }
-        if(in_array($direction, [AbstractDirection::NORTH, AbstractDirection::SOUTH, AbstractDirection::EAST, AbstractDirection::WEST], true)) {
-            $this->direction = $direction;
-        }else{
-            throw new \InvalidArgumentException('The direction' . $direction .'is not valid. Available directions: N, S, E, W. ' );
-        }
+
+        $this->rover = $rover;
     }
 
-    public function executeCommand():void
+    public function executeCommand():Rover
     {
         if (($this->command === self::FORWARD) || ($this->command === self::BACKWARD)) {
-            $this->turn();
-        } elseif (($this->command === self::LEFT) || ($this->command === self::RIGHT)) {
             $this->move();
+        } elseif (($this->command === self::LEFT) || ($this->command === self::RIGHT)) {
+            $this->turn();
         }
+        return $this->rover;
     }
 
     protected function turn(){
+        $roverDirection = $this->rover->getDirection();
 
+        if ($this->command === self::LEFT)
+        {
+            switch ($roverDirection) {
+                case AbstractDirection::WEST:
+                    $this->rover->setDirection(AbstractDirection::SOUTH);
+                    break;
+                case AbstractDirection::SOUTH:
+                    $this->rover->setDirection(AbstractDirection::EAST);
+                    break;
+                case AbstractDirection::EAST:
+                    $this->rover->setDirection(AbstractDirection::NORTH);
+                    break;
+                case AbstractDirection::NORTH:
+                    $this->rover->setDirection(AbstractDirection::WEST);
+            }
+        }
+
+        if ($this->command === self::LEFT)
+        {
+            switch ($roverDirection) {
+                case AbstractDirection::WEST:
+                    $this->rover->setDirection(AbstractDirection::NORTH);
+                    break;
+                case AbstractDirection::NORTH:
+                    $this->rover->setDirection(AbstractDirection::EAST);
+                    break;
+                case AbstractDirection::EAST:
+                    $this->rover->setDirection(AbstractDirection::SOUTH);
+                    break;
+                case AbstractDirection::SOUTH:
+                    $this->rover->setDirection(AbstractDirection::WEST);
+            }
+        }
     }
 
     protected function move(){
 
+        switch ($this->rover->getDirection()) {
+            case AbstractDirection::NORTH:
+                $position->setY($position->getY() + 1);
+                break;
+            case AbstractDirection::SOUTH:
+                $position->setY($position->getY() - 1);
+                break;
+            case AbstractDirection::EAST:
+                $position->setX($position->getX() + 1);
+                break;
+            case AbstractDirection::WEST:
+                $position->setX($position->getX() - 1);
+                break;
+        }
     }
 
+    /**
+     * @param string $command
+     * @return bool
+     */
+    protected function checkCommand(string $command): bool
+    {
+        if (in_array($command, [self::RIGHT, self::LEFT, self::BACKWARD, self::FORWARD], true)) {
+            return true;
+        }
 
+        throw new \InvalidArgumentException('The command' . $command . 'is not valid. Available commands: F, B, L, R.');
+    }
 }
