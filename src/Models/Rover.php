@@ -1,23 +1,21 @@
 <?php
 
 
-namespace src\Entity;
+namespace src\Models;
 
 class Rover {
-
-    public const NORTH = 'north';
-
-    public const SOUTH = 'south';
-
-    public const EAST = 'east';
-
-    public const WEST = 'west';
 
     private $x = 0;
 
     private $y = 0;
 
     private $directionFacing;
+
+    protected function __construct(int $x, int $y)
+    {
+        $this->x = $x;
+        $this->y = $y;
+    }
 
     public function setX(int $x):void {
         $this->x = $x;
