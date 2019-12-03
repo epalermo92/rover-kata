@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 
-namespace src\Models;
+namespace App\Models;
 
 
 class Mars

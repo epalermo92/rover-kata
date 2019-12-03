@@ -8,7 +8,7 @@ $y = readline("Inserisci l'ordinata iniziale \n");
 $startingDirection = readline("Inserisci la direzione iniziale: \n");
 $command = readline("Inserisci il primo comando che vuoi eseguire: \n");
 
-$game = new \src\Models\Game($x, $y, $startingDirection);
+$game = new \App\Models\Game($x, $y, $startingDirection);
 
 do{
     echo 'Inserire il comando da eseguire: ';

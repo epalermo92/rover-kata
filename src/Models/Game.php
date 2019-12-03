@@ -1,8 +1,6 @@
 <?php
 
-
-namespace src\Models;
-
+namespace App\Models;
 
 class Game
 {
@@ -54,7 +52,7 @@ class Game
     public function play(string $command) {
         $this->rover = $this->command->executeCommand($this->rover, $command);
         // TODO Mars va aggiornato!! !?!?
-        echo " Actual rover: \n -position" . $this->rover->getX() . $this->rover->getY() .
+        echo " Actual Rover situation: \n -position" . $this->rover->getX() . $this->rover->getY() .
             "\n -Facing direction: " . $this->rover->getDirection();
     }
 }

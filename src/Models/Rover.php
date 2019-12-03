@@ -1,7 +1,7 @@
 <?php
 
 
-namespace src\Models;
+namespace App\Models;
 
 class Rover {
 
