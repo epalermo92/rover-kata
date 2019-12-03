@@ -14,44 +14,36 @@ class Command extends AbstractDirection
 
     public $command;
 
-    protected $rover;
-
-    protected function __construct(string $command, Rover $rover )
+    public function executeCommand(Rover $rover, string $command):Rover
     {
-        if ($this->checkCommand($command)){
+        if ($this->checkCommand($command)) {
             $this->command = $command;
         }
-
-        $this->rover = $rover;
-    }
-
-    public function executeCommand():Rover
-    {
         if (($this->command === self::FORWARD) || ($this->command === self::BACKWARD)) {
-            $this->move();
+            $this->move($rover);
         } elseif (($this->command === self::LEFT) || ($this->command === self::RIGHT)) {
-            $this->turn();
+            $this->turn($rover);
         }
-        return $this->rover;
+        return $rover;
     }
 
-    protected function turn(){
-        $roverDirection = $this->rover->getDirection();
+    protected function turn(Rover $rover){
+        $roverDirection = $rover->getDirection();
 
         if ($this->command === self::LEFT)
         {
             switch ($roverDirection) {
                 case AbstractDirection::WEST:
-                    $this->rover->setDirection(AbstractDirection::SOUTH);
+                    $rover->setDirection(AbstractDirection::SOUTH);
                     break;
                 case AbstractDirection::SOUTH:
-                    $this->rover->setDirection(AbstractDirection::EAST);
+                    $rover->setDirection(AbstractDirection::EAST);
                     break;
                 case AbstractDirection::EAST:
-                    $this->rover->setDirection(AbstractDirection::NORTH);
+                    $rover->setDirection(AbstractDirection::NORTH);
                     break;
                 case AbstractDirection::NORTH:
-                    $this->rover->setDirection(AbstractDirection::WEST);
+                    $rover->setDirection(AbstractDirection::WEST);
             }
         }
 
@@ -59,34 +51,34 @@ class Command extends AbstractDirection
         {
             switch ($roverDirection) {
                 case AbstractDirection::WEST:
-                    $this->rover->setDirection(AbstractDirection::NORTH);
+                    $rover->setDirection(AbstractDirection::NORTH);
                     break;
                 case AbstractDirection::NORTH:
-                    $this->rover->setDirection(AbstractDirection::EAST);
+                    $rover->setDirection(AbstractDirection::EAST);
                     break;
                 case AbstractDirection::EAST:
-                    $this->rover->setDirection(AbstractDirection::SOUTH);
+                    $rover->setDirection(AbstractDirection::SOUTH);
                     break;
                 case AbstractDirection::SOUTH:
-                    $this->rover->setDirection(AbstractDirection::WEST);
+                    $rover->setDirection(AbstractDirection::WEST);
             }
         }
     }
 
-    protected function move(){
+    protected function move(Rover $rover){
 
-        switch ($this->rover->getDirection()) {
+        switch ($rover->getDirection()) {
             case AbstractDirection::NORTH:
-                $position->setY($position->getY() + 1);
+                $rover->setY($position->getY() + 1);
                 break;
             case AbstractDirection::SOUTH:
-                $position->setY($position->getY() - 1);
+                $rover->setY($position->getY() - 1);
                 break;
             case AbstractDirection::EAST:
-                $position->setX($position->getX() + 1);
+                $rover->setX($position->getX() + 1);
                 break;
             case AbstractDirection::WEST:
-                $position->setX($position->getX() - 1);
+                $rover->setX($position->getX() - 1);
                 break;
         }
     }

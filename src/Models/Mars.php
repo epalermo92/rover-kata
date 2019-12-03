@@ -13,7 +13,7 @@ class Mars
 
     public $mars;
 
-    protected function __construct(int $width, int $height)
+    public function __construct(int $width, int $height)
     {
         $this->width = $width;
         $this->height = $height;

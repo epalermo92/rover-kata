@@ -11,10 +11,11 @@ class Rover {
 
     private $directionFacing;
 
-    protected function __construct(int $x, int $y)
+    public function __construct(int $x, int $y, string $directionFacing)
     {
         $this->x = $x;
         $this->y = $y;
+        $this->setDirection($directionFacing);
     }
 
     public function setX(int $x):void {
