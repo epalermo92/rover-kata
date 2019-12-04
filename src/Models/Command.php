@@ -28,59 +28,30 @@ class Command extends AbstractDirection
     }
 
     protected function turn(Rover $rover){
-        $roverDirection = $rover->getDirection();
+        $directionMapper = [
+          AbstractDirection::WEST => AbstractDirection::SOUTH,
+          AbstractDirection::SOUTH => AbstractDirection::EAST,
+          AbstractDirection::EAST => AbstractDirection::NORTH,
+          AbstractDirection::NORTH => AbstractDirection::WEST,
+        ];
 
-        if ($this->command === self::LEFT)
-        {
-            switch ($roverDirection) {
-                case AbstractDirection::WEST:
-                    $rover->setDirection(AbstractDirection::SOUTH);
-                    break;
-                case AbstractDirection::SOUTH:
-                    $rover->setDirection(AbstractDirection::EAST);
-                    break;
-                case AbstractDirection::EAST:
-                    $rover->setDirection(AbstractDirection::NORTH);
-                    break;
-                case AbstractDirection::NORTH:
-                    $rover->setDirection(AbstractDirection::WEST);
-            }
+        if ($this->command === self::LEFT){
+            $rover->setDirection($directionMapper[$rover->getDirection()]);
         }
-
-        if ($this->command === self::LEFT)
-        {
-            switch ($roverDirection) {
-                case AbstractDirection::WEST:
-                    $rover->setDirection(AbstractDirection::NORTH);
-                    break;
-                case AbstractDirection::NORTH:
-                    $rover->setDirection(AbstractDirection::EAST);
-                    break;
-                case AbstractDirection::EAST:
-                    $rover->setDirection(AbstractDirection::SOUTH);
-                    break;
-                case AbstractDirection::SOUTH:
-                    $rover->setDirection(AbstractDirection::WEST);
-            }
+        if ($this->command === self::RIGHT){
+            array_flip($directionMapper);
+            $rover->setDirection($directionMapper[$rover->getDirection()]);
         }
     }
 
     protected function move(Rover $rover){
-
-        switch ($rover->getDirection()) {
-            case AbstractDirection::NORTH:
-                $rover->setY($position->getY() + 1);
-                break;
-            case AbstractDirection::SOUTH:
-                $rover->setY($position->getY() - 1);
-                break;
-            case AbstractDirection::EAST:
-                $rover->setX($position->getX() + 1);
-                break;
-            case AbstractDirection::WEST:
-                $rover->setX($position->getX() - 1);
-                break;
-        }
+        $movementMapper = array(
+            AbstractDirection::NORTH => new Rover($rover->getX(), $rover->getY() +1 , AbstractDirection::NORTH),
+            AbstractDirection::SOUTH => new Rover($rover->getX(), $rover->getY() -1 , AbstractDirection::SOUTH),
+            AbstractDirection::EAST => new Rover($rover->getX() + 1, $rover->getY(), AbstractDirection::EAST),
+            AbstractDirection::WEST => new Rover($rover->getX() -1, $rover->getY(), AbstractDirection::WEST),
+            );
+        $movementMapper[$rover->getDirection()]();
     }
 
     /**
