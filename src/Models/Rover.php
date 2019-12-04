@@ -5,24 +5,21 @@ namespace Models;
 
 class Rover extends AbstractDirection {
 
-    private int $x;
-
-    private int $y;
+    private Position $position;
 
     public function __construct(int $x, int $y, string $directionFacing)
     {
-        $this->x = $x;
-        $this->y = $y;
+        $this->position = new Position($x, $y);
         $this->direction = $directionFacing;
     }
 
     public function getX():int {
-        return $this->x;
+        return $this->position->getX();
     }
 
     public function getY():int
     {
-        return $this->y;
+        return $this->position->getY();
     }
 
     public function getDirection():string {

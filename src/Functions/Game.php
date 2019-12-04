@@ -4,11 +4,11 @@ namespace Models;
 
 class Game
 {
-    private $mars;
+    private Mars $mars;
 
-    private $rover;
+    private Rover $rover;
 
-    private $command;
+    private string $command;
 
     public function __construct(int $width, int $height, int $x, int $y, string $startingDirection)
     {
