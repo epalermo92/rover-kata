@@ -1,6 +1,9 @@
 <?php
 
-namespace Models;
+namespace App\Functions;
+
+use App\Models\AbstractDirection;
+use App\Models\Rover;
 
 class Command extends AbstractDirection
 {
