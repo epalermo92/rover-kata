@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Models;
 
 class AbstractDirection
 {
@@ -12,13 +12,5 @@ class AbstractDirection
 
     public const WEST = 'W';
 
-    private $direction;
-
-    public function setDirection(string $direction):void {
-        $this->direction = $direction;
-    }
-
-    public function getDirection(string $direction):string {
-        return $this->direction;
-    }
+    protected string $direction;
 }

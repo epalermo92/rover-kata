@@ -3,16 +3,16 @@
 echo 'Game started! \n';
 echo 'Insert starting position (x, y) and starting direction: ';
 
-$x = readline("Inserisci l'ascissa iniziale \n");
-$y = readline("Inserisci l'ordinata iniziale \n");
-$startingDirection = readline("Inserisci la direzione iniziale: \n");
-$command = readline("Inserisci il primo comando che vuoi eseguire: \n");
+$width = readline("Inserire la larghezza della griglia ");
+$height = readline("Inserire l'altezza della griglia ");
+$x = readline("Inserisci l'ascissa iniziale ");
+$y = readline("Inserisci l'ordinata iniziale ");
+$startingDirection = readline("Inserisci la direzione iniziale: ");
 
-$game = new \App\Models\Game($x, $y, $startingDirection);
+$game = new \Models\Game($width, $height, $x, $y, $startingDirection);
 
 do{
-    echo 'Inserire il comando da eseguire: ';
-    $command = readline();
+    $command = readline('Inserire il comando da eseguire: ');
     if ($command!=='exit'){
         $game->play($command);
     }

@@ -1,33 +1,23 @@
 <?php
 
 
-namespace App\Models;
+namespace Models;
 
-class Rover {
+class Rover extends AbstractDirection {
 
-    private $x = 0;
+    private int $x;
 
-    private $y = 0;
-
-    private $directionFacing;
+    private int $y;
 
     public function __construct(int $x, int $y, string $directionFacing)
     {
         $this->x = $x;
         $this->y = $y;
-        $this->setDirection($directionFacing);
-    }
-
-    public function setX(int $x):void {
-        $this->x = $x;
+        $this->direction = $directionFacing;
     }
 
     public function getX():int {
         return $this->x;
-    }
-
-    public function setY(int $y):void {
-        $this->y = $y;
     }
 
     public function getY():int
@@ -35,11 +25,7 @@ class Rover {
         return $this->y;
     }
 
-    public function setDirection(string $directionFacing):string {
-        return $this->directionFacing = $directionFacing;
-    }
-
     public function getDirection():string {
-        return $this->directionFacing;
+        return $this->direction;
     }
 }

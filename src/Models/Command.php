@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Models;
 
 class Command extends AbstractDirection
 {
@@ -12,7 +12,7 @@ class Command extends AbstractDirection
 
     public const RIGHT = 'R';
 
-    public $command;
+    public string $command;
 
     public function executeCommand(Rover $rover, string $command):Rover
     {
@@ -20,38 +20,39 @@ class Command extends AbstractDirection
             $this->command = $command;
         }
         if (($this->command === self::FORWARD) || ($this->command === self::BACKWARD)) {
-            $this->move($rover);
+            $rover = $this->move($rover);
         } elseif (($this->command === self::LEFT) || ($this->command === self::RIGHT)) {
-            $this->turn($rover);
+            $rover = $this->turn($rover);
         }
         return $rover;
     }
 
-    protected function turn(Rover $rover){
+    protected function turn(Rover $rover):Rover {
         $directionMapper = [
-          AbstractDirection::WEST => AbstractDirection::SOUTH,
-          AbstractDirection::SOUTH => AbstractDirection::EAST,
-          AbstractDirection::EAST => AbstractDirection::NORTH,
-          AbstractDirection::NORTH => AbstractDirection::WEST,
+            Rover::WEST => Rover::SOUTH,
+            Rover::SOUTH => Rover::EAST,
+            Rover::EAST => Rover::NORTH,
+            Rover::NORTH => Rover::WEST,
         ];
-
+        $newRover = new Rover(0,0,Rover::NORTH);
         if ($this->command === self::LEFT){
-            $rover->setDirection($directionMapper[$rover->getDirection()]);
+            $newRover = new Rover($rover->getX(), $rover->getY(), $directionMapper[$rover->getDirection()]);
         }
         if ($this->command === self::RIGHT){
             array_flip($directionMapper);
-            $rover->setDirection($directionMapper[$rover->getDirection()]);
+            $newRover = new Rover($rover->getX(), $rover->getY(), $directionMapper[$rover->getDirection()]);
         }
+        return $newRover;
     }
 
-    protected function move(Rover $rover){
+    protected function move(Rover $rover):Rover{
         $movementMapper = array(
             AbstractDirection::NORTH => new Rover($rover->getX(), $rover->getY() +1 , AbstractDirection::NORTH),
             AbstractDirection::SOUTH => new Rover($rover->getX(), $rover->getY() -1 , AbstractDirection::SOUTH),
             AbstractDirection::EAST => new Rover($rover->getX() + 1, $rover->getY(), AbstractDirection::EAST),
             AbstractDirection::WEST => new Rover($rover->getX() -1, $rover->getY(), AbstractDirection::WEST),
             );
-        $movementMapper[$rover->getDirection()]();
+         return $movementMapper[$rover->getDirection()]();
     }
 
     /**

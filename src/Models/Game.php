@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Models;
 
 class Game
 {
@@ -10,35 +10,17 @@ class Game
 
     private $command;
 
-    public function __construct(int $x, int $y, string $startingDirection)
+    public function __construct(int $width, int $height, int $x, int $y, string $startingDirection)
     {
-        $this->mars = new Mars(5,5);
+        $this->mars = new Mars($width,$height);
         $this->rover = new Rover($x, $y, $startingDirection);
         $this->command = new Command();
     }
 
-    /**
-     * @param Mars $mars
-     */
-    public function setMars(Mars $mars): void
-    {
-        $this->mars = $mars;
-    }
-
-    /**
-     * @return Mars
-     */
-    public function getMars(): Mars
-    {
-        return $this->mars;
-    }
-
-    /**
-     * @param Rover $rover
-     */
-    public function setRover(Rover $rover): void
-    {
-        $this->rover = $rover;
+    public function play(string $command) {
+        $this->rover = $this->command->executeCommand($this->rover, $command);
+        echo " Actual Rover situation: \n -position" . $this->rover->getX() . $this->rover->getY() .
+            "\n -Facing direction: " . $this->rover->getDirection();
     }
 
     /**
@@ -49,10 +31,11 @@ class Game
         return $this->rover;
     }
 
-    public function play(string $command) {
-        $this->rover = $this->command->executeCommand($this->rover, $command);
-        // TODO Mars va aggiornato!! !?!?
-        echo " Actual Rover situation: \n -position" . $this->rover->getX() . $this->rover->getY() .
-            "\n -Facing direction: " . $this->rover->getDirection();
+    /**
+     * @return Mars
+     */
+    public function getMars(): Mars
+    {
+        return $this->mars;
     }
 }
