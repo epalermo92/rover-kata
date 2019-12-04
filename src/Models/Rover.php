@@ -5,7 +5,7 @@ namespace App\Models;
 
 class Rover extends AbstractDirection {
 
-    private Position $position;
+    private  $position;
 
     public function __construct(int $x, int $y, string $directionFacing)
     {

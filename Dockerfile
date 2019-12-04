@@ -1,4 +1,4 @@
 FROM php:7.4-cli
-COPY . /usr/src/rover
-WORKDIR /usr/src/rover
+COPY . /usr/src/marsrover
+WORKDIR /usr/src/marsrover
 CMD [ "php", "./index.php" ]

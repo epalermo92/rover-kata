@@ -7,20 +7,20 @@ use App\Models\Rover;
 
 class Game
 {
-    private Mars $mars;
+    private  $mars;
 
-    private Rover $rover;
+    private  $rover;
 
-    private string $command;
+    private  $command;
 
-    private array $obstacles;
+//    private  $obstacles;
 
-    public function __construct(int $width, int $height, int $x, int $y, string $startingDirection, array $obstacles)
+    public function __construct(int $width, int $height, int $x, int $y, string $startingDirection/*, array $obstacles*/)
     {
         $this->mars = new Mars($width,$height);
         $this->rover = new Rover($x, $y, $startingDirection);
         $this->command = new Command();
-        $this->obstacles = $obstacles;
+//        $this->obstacles = $obstacles;
     }
 
     public function play(string $command) {

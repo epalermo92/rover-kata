@@ -1,14 +1,13 @@
-<?php
-
+<?php declare(strict_types=1);
 
 namespace App\Models;
 
 
 class Mars
 {
-    private int $width;
+    private  $width;
 
-    private int $height;
+    private  $height;
 
     public function __construct(int $width, int $height)
     {

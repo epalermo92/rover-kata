@@ -6,9 +6,9 @@ namespace App\Models;
 
 class Position
 {
-    protected int $x;
+    protected  $x;
 
-    protected int $y;
+    protected  $y;
 
     public function __construct(int $x, int $y)
     {

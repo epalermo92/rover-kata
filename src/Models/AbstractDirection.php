@@ -12,5 +12,5 @@ class AbstractDirection
 
     public const WEST = 'W';
 
-    protected string $direction;
+    protected  $direction;
 }
