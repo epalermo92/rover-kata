@@ -10,9 +10,9 @@ class Rover {
     /** @var AbstractDirection */
     private $directionFacing;
 
-    public function __construct(int $x, int $y, AbstractDirection $directionFacing)
+    public function __construct(Position $position, AbstractDirection $directionFacing)
     {
-        $this->position = new Position($x, $y);
+        $this->position = $position;
         $this->directionFacing = $directionFacing;
     }
 

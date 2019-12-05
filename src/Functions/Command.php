@@ -31,32 +31,32 @@ class Command extends AbstractCommand
         if ($command->getCommand() === (new CommandL())->getCommand()) {
             switch ($rover->getDirection()->getDirection()) {
                 case (new \App\Models\DirectionW)->getDirection():
-                    return new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), new DirectionS());
+                    return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new DirectionS());
                     break;
                 case (new \App\Models\DirectionS)->getDirection():
-                    return new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), new DirectionE());
+                    return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new DirectionE());
                     break;
                 case (new \App\Models\DirectionE)->getDirection():
-                    return new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), new DirectionN());
+                    return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new DirectionN());
                     break;
                 case (new \App\Models\DirectionN)->getDirection():
-                    return new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), new DirectionW());
+                    return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new DirectionW());
 
             }
         }
         if ($command->getCommand() === (new CommandR())->getCommand()) {
             switch ($rover->getDirection()->getDirection()) {
                 case (new \App\Models\DirectionS)->getDirection():
-                    return new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), new DirectionW());
+                    return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new DirectionW());
                     break;
                 case (new \App\Models\DirectionE)->getDirection():
-                    return new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), new DirectionS());
+                    return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new DirectionS());
                     break;
                 case (new \App\Models\DirectionN)->getDirection():
-                    return new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), new DirectionE());
+                    return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new DirectionE());
                     break;
                 case (new \App\Models\DirectionW)->getDirection():
-                    return new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), new DirectionN());
+                    return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new DirectionN());
             }
         }
         return $rover;
@@ -68,31 +68,31 @@ class Command extends AbstractCommand
         if ($command->getCommand() === (new CommandF())->getCommand()) {
             switch ($rover->getDirection()->getDirection()) {
                 case (new DirectionN())->getDirection():
-                    $newRover = new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY() + 1, new DirectionN());
+                    $newRover = new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY() + 1), new DirectionN());
                     break;
                 case (new DirectionS())->getDirection():
-                    $newRover = new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY() - 1, new DirectionS());
+                    $newRover = new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY() - 1), new DirectionS());
                     break;
                 case (new DirectionE())->getDirection():
-                    $newRover = new Rover($rover->getPosition()->getX() + 1, $rover->getPosition()->getY(), new DirectionE());
+                    $newRover = new Rover(PositionBuilder::build($rover->getPosition()->getX() + 1, $rover->getPosition()->getY()), new DirectionE());
                     break;
                 case (new DirectionW())->getDirection():
-                    $newRover = new Rover($rover->getPosition()->getX() - 1, $rover->getPosition()->getY(), new DirectionW());
+                    $newRover = new Rover(PositionBuilder::build($rover->getPosition()->getX() - 1, $rover->getPosition()->getY()), new DirectionW());
             }
         }
         if ($command->getCommand() === (new CommandB())->getCommand()) {
             switch ($rover->getDirection()->getDirection()) {
                 case (new DirectionN())->getDirection():
-                    $newRover = new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY() - 1, new DirectionN());
+                    $newRover = new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY() - 1), new DirectionN());
                     break;
                 case (new DirectionS())->getDirection():
-                    $newRover = new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY() + 1, new DirectionS());
+                    $newRover = new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY() + 1), new DirectionS());
                     break;
                 case (new DirectionE())->getDirection():
-                    $newRover = new Rover($rover->getPosition()->getX() - 1, $rover->getPosition()->getY(), new DirectionE());
+                    $newRover = new Rover(PositionBuilder::build($rover->getPosition()->getX() - 1, $rover->getPosition()->getY()), new DirectionE());
                     break;
                 case (new DirectionW())->getDirection():
-                    $newRover = new Rover($rover->getPosition()->getX() + 1, $rover->getPosition()->getY(), new DirectionW());
+                    $newRover = new Rover(PositionBuilder::build($rover->getPosition()->getX() + 1, $rover->getPosition()->getY()), new DirectionW());
             }
         }
 //        if (self::meetsObstacles($newRover->getPosition(), $mars->getObstacles())){
@@ -104,13 +104,13 @@ class Command extends AbstractCommand
 
     public static function checkRoverLimits(Rover $rover, Mars $mars):Rover{
         if($rover->getPosition()->getX() < 1){
-            return new Rover($mars->getWidth(), $rover->getPosition()->getY(), $rover->getDirection());
+            return new Rover(PositionBuilder::build($mars->getWidth(), $rover->getPosition()->getY()), $rover->getDirection());
         }elseif($rover->getPosition()->getX() > $mars->getWidth()){
-            return new Rover(1, $rover->getPosition()->getY(), $rover->getDirection());
+            return new Rover(PositionBuilder::build(1, $rover->getPosition()->getY()), $rover->getDirection());
         }elseif($rover->getPosition()->getY() < 1){
-            return new Rover($rover->getPosition()->getX(), $mars->getHeight(), $rover->getDirection());
+            return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $mars->getHeight()), $rover->getDirection());
         }elseif($rover->getPosition()->getY() > $mars->getHeight()){
-            return new Rover($rover->getPosition()->getX(), 1, $rover->getDirection());
+            return new Rover(PositionBuilder::build($rover->getPosition()->getX(), 1), $rover->getDirection());
         }
 
         return $rover;

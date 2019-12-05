@@ -31,7 +31,7 @@ $startingDirection = readline();
 //    $obstacles = array(null);
 //}
 
-if(\App\Functions\Game::play(\App\Functions\MarsBuilder::build($width, $height/*,$obstacles*/), new \App\Models\Rover($x, $y, \App\Functions\DirectionBuilder::build($startingDirection))))
+if(\App\Functions\Game::play(\App\Functions\MarsBuilder::build($width, $height/*,$obstacles*/), new \App\Models\Rover(\App\Functions\PositionBuilder::build($x,$y), \App\Functions\DirectionBuilder::build($startingDirection))))
 {
     exit(0);
 }
