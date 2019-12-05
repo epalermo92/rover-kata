@@ -1,16 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models;
 
-class AbstractDirection
+abstract class AbstractDirection
 {
-    public const NORTH = 'N';
+    /** @var string */
+    private $direction;
 
-    public const SOUTH = 'S';
+    public function __construct(string $direction)
+    {
+        $this-> direction = $direction;
+    }
 
-    public const EAST = 'E';
-
-    public const WEST = 'W';
-
-    protected  $direction;
+    public function getDirection(): string
+    {
+        return $this->direction;
+    }
 }

@@ -1,101 +1,126 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Functions;
 
-use App\Models\AbstractDirection;
+use App\Models\AbstractCommand;
+use App\Models\CommandB;
+use App\Models\CommandF;
+use App\Models\CommandL;
+use App\Models\CommandR;
+use App\Models\DirectionE;
+use App\Models\DirectionN;
+use App\Models\DirectionS;
+use App\Models\DirectionW;
 use App\Models\Mars;
 use App\Models\Rover;
 
-class Command extends AbstractDirection
+class Command extends AbstractCommand
 {
-    public const FORWARD = 'F';
-
-    public const BACKWARD = 'B';
-
-    public const LEFT = 'L';
-
-    public const RIGHT = 'R';
-
-    public  $command;
-
-    public function executeCommand(Rover $rover, string $command, Mars $mars):Rover
+    public static function executeCommand(Rover $rover, AbstractCommand $command, Mars $mars):Rover
     {
-        if ($this->checkCommand($command)) {
-            $this->command = $command;
+        $newRover = $rover;
+        if (($command->getCommand() === (new CommandF())->getCommand()) || ($command->getCommand() === (new CommandB())->getCommand())) {
+            $newRover = self::move($rover, $mars, $command);
+        } elseif (($command->getCommand() === (new CommandL())->getCommand()) || ($command->getCommand() === (new CommandR())->getCommand())) {
+            $newRover = self::turn($rover, $command);
         }
-        if (($this->command === self::FORWARD) || ($this->command === self::BACKWARD)) {
-            $rover = $this->move($rover,$command);
-        } elseif (($this->command === self::LEFT) || ($this->command === self::RIGHT)) {
-            $rover = $this->turn($rover);
-        }
-        return $this->checkRoverLimits($rover, $mars);
+        return self::checkRoverLimits($newRover, $mars);
     }
 
-    protected function turn(Rover $rover):Rover {
-        $directionMapper = [
-            Rover::WEST => Rover::SOUTH,
-            Rover::SOUTH => Rover::EAST,
-            Rover::EAST => Rover::NORTH,
-            Rover::NORTH => Rover::WEST,
-        ];
-        $newRover = new Rover(0,0,Rover::NORTH);
-        if ($this->command === self::LEFT){
-            $newRover = new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), $directionMapper[$rover->getDirection()]);
-        }
-        if ($this->command === self::RIGHT){
-            $flippedDirectionMapper = array_flip($directionMapper);
-            $newRover = new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), $flippedDirectionMapper[$rover->getDirection()]);
-        }
-        return $newRover;
-    }
+    protected static function turn(Rover $rover, AbstractCommand $command):Rover {
+        if ($command->getCommand() === (new CommandL())->getCommand()) {
+            switch ($rover->getDirection()->getDirection()) {
+                case (new \App\Models\DirectionW)->getDirection():
+                    return new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), new DirectionS());
+                    break;
+                case (new \App\Models\DirectionS)->getDirection():
+                    return new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), new DirectionE());
+                    break;
+                case (new \App\Models\DirectionE)->getDirection():
+                    return new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), new DirectionN());
+                    break;
+                case (new \App\Models\DirectionN)->getDirection():
+                    return new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), new DirectionW());
 
-    protected function move(Rover $rover,$command):Rover{
-        $x = $rover->getPosition()->getX();
-        $y = $rover->getPosition()->getY();
-        if ($command === Command::FORWARD) {
-            $movementMapper = array(
-                AbstractDirection::NORTH => new Rover($x, $y + 1, AbstractDirection::NORTH),
-                AbstractDirection::SOUTH => new Rover($x, $y - 1, AbstractDirection::SOUTH),
-                AbstractDirection::EAST => new Rover($x + 1, $y, AbstractDirection::EAST),
-                AbstractDirection::WEST => new Rover($x - 1, $y, AbstractDirection::WEST),
-            );
+            }
         }
-        if ($command === Command::BACKWARD) {
-            $movementMapper = array(
-                AbstractDirection::NORTH => new Rover($x, $y - 1, AbstractDirection::NORTH),
-                AbstractDirection::SOUTH => new Rover($x, $y + 1, AbstractDirection::SOUTH),
-                AbstractDirection::EAST => new Rover($x - 1, $y, AbstractDirection::EAST),
-                AbstractDirection::WEST => new Rover($x + 1, $y, AbstractDirection::WEST),
-            );
-        }
-        return $movementMapper[$rover->getDirection()];
-    }
-
-    public function checkRoverLimits(Rover $rover, Mars $mars):Rover{
-        $x = $rover->getPosition()->getX();
-        $y = $rover->getPosition()->getY();
-        if($x < 1){
-            return new Rover($mars->getWidth(), $y, $rover->getDirection());
-        }elseif($x > $mars->getWidth()){
-            return new Rover(1, $y, $rover->getDirection());
-        }elseif($y < 1){
-            return new Rover($x, $mars->getHeight(), $rover->getDirection());
-        }elseif($y > $mars->getHeight()){
-            return new Rover($x, 1, $rover->getDirection());
+        if ($command->getCommand() === (new CommandR())->getCommand()) {
+            switch ($rover->getDirection()->getDirection()) {
+                case (new \App\Models\DirectionS)->getDirection():
+                    return new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), new DirectionW());
+                    break;
+                case (new \App\Models\DirectionE)->getDirection():
+                    return new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), new DirectionS());
+                    break;
+                case (new \App\Models\DirectionN)->getDirection():
+                    return new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), new DirectionE());
+                    break;
+                case (new \App\Models\DirectionW)->getDirection():
+                    return new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), new DirectionN());
+            }
         }
         return $rover;
     }
 
-    /**
-     * @param string $command
-     * @return bool
-     */
-    protected function checkCommand(string $command): bool
+    protected static function move(Rover $rover, Mars $mars, AbstractCommand $command):Rover
     {
-        if (in_array($command, [self::RIGHT, self::LEFT, self::BACKWARD, self::FORWARD], true)) {
-            return true;
+        $newRover = $rover;
+        if ($command->getCommand() === (new CommandF())->getCommand()) {
+            switch ($rover->getDirection()->getDirection()) {
+                case (new DirectionN())->getDirection():
+                    $newRover = new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY() + 1, new DirectionN());
+                    break;
+                case (new DirectionS())->getDirection():
+                    $newRover = new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY() - 1, new DirectionS());
+                    break;
+                case (new DirectionE())->getDirection():
+                    $newRover = new Rover($rover->getPosition()->getX() + 1, $rover->getPosition()->getY(), new DirectionE());
+                    break;
+                case (new DirectionW())->getDirection():
+                    $newRover = new Rover($rover->getPosition()->getX() - 1, $rover->getPosition()->getY(), new DirectionW());
+            }
+        }
+        if ($command->getCommand() === (new CommandB())->getCommand()) {
+            switch ($rover->getDirection()->getDirection()) {
+                case (new DirectionN())->getDirection():
+                    $newRover = new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY() - 1, new DirectionN());
+                    break;
+                case (new DirectionS())->getDirection():
+                    $newRover = new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY() + 1, new DirectionS());
+                    break;
+                case (new DirectionE())->getDirection():
+                    $newRover = new Rover($rover->getPosition()->getX() - 1, $rover->getPosition()->getY(), new DirectionE());
+                    break;
+                case (new DirectionW())->getDirection():
+                    $newRover = new Rover($rover->getPosition()->getX() + 1, $rover->getPosition()->getY(), new DirectionW());
+            }
+        }
+//        if (self::meetsObstacles($newRover->getPosition(), $mars->getObstacles())){
+//            return $rover;
+//        }
+
+        return $newRover;
+    }
+
+    public static function checkRoverLimits(Rover $rover, Mars $mars):Rover{
+        if($rover->getPosition()->getX() < 1){
+            return new Rover($mars->getWidth(), $rover->getPosition()->getY(), $rover->getDirection());
+        }elseif($rover->getPosition()->getX() > $mars->getWidth()){
+            return new Rover(1, $rover->getPosition()->getY(), $rover->getDirection());
+        }elseif($rover->getPosition()->getY() < 1){
+            return new Rover($rover->getPosition()->getX(), $mars->getHeight(), $rover->getDirection());
+        }elseif($rover->getPosition()->getY() > $mars->getHeight()){
+            return new Rover($rover->getPosition()->getX(), 1, $rover->getDirection());
         }
 
-        throw new \InvalidArgumentException('The command' . $command . 'is not valid. Available commands: F, B, L, R.');
+        return $rover;
     }
+
+//    private static function meetsObstacles(Position $position, array $obstacles):bool {
+//        foreach ($obstacles as $obstacle){
+//            if($position === $obstacle)
+//                return true;
+//        }
+//        return false;
+//    }
 }
