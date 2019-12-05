@@ -29,8 +29,9 @@ class Game
     }
 
     public function showPosition(){
-        echo "\nActual Rover position:" . "\n\t\t\t\t\t\t- x: " . $this->rover->getX() . "\n\t\t\t\t\t\t- y: " . $this->rover->getY() .
-            "\n\t\t\t\t - Facing direction: " . $this->rover->getDirection() . "\n\n";
+        echo "\n\t\t\t\tActual Rover position: " .
+            "(" .$this->rover->getPosition()->getX() . ", " . $this->rover->getPosition()->getY() . ")" .
+            "\n\t\t\t\tFacing direction: \t" . $this->rover->getDirection() . "\n\n";
     }
 
     /**

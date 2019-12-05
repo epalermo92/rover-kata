@@ -13,13 +13,12 @@ class Rover extends AbstractDirection {
         $this->direction = $directionFacing;
     }
 
-    public function getX():int {
-        return $this->position->getX();
-    }
-
-    public function getY():int
+    /**
+     * @return Position
+     */
+    public function getPosition(): Position
     {
-        return $this->position->getY();
+        return $this->position;
     }
 
     public function getDirection():string {

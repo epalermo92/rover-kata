@@ -6,9 +6,9 @@ echo "\nGame started! \n\nInserire la larghezza della griglia:\t";
 $width = readline();
 echo "\nInserire l'altezza della griglia:\t";
 $height = readline();
-echo "\nInserisci l'ascissa iniziale:\t";
+echo "\nInserisci l'ascissa iniziale:\t\t";
 $x = readline();
-echo "\nInserisci l'ordinata iniziale:\t";
+echo "\nInserisci l'ordinata iniziale:\t\t";
 $y = readline();
 echo "\nInserisci la direzione iniziale:\t";
 $startingDirection = readline();
@@ -29,6 +29,7 @@ $startingDirection = readline();
 //if ($checkObstacles === 'N') {
 //    $obstacles = array(null);
 //}
+
 $game = new \App\Functions\Game($width, $height, $x, $y, $startingDirection,/* $obstacles*/);
 $game->showPosition();
 do{

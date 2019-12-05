@@ -40,45 +40,48 @@ class Command extends AbstractDirection
         ];
         $newRover = new Rover(0,0,Rover::NORTH);
         if ($this->command === self::LEFT){
-            $newRover = new Rover($rover->getX(), $rover->getY(), $directionMapper[$rover->getDirection()]);
+            $newRover = new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), $directionMapper[$rover->getDirection()]);
         }
         if ($this->command === self::RIGHT){
             $flippedDirectionMapper = array_flip($directionMapper);
-            $newRover = new Rover($rover->getX(), $rover->getY(), $flippedDirectionMapper[$rover->getDirection()]);
+            $newRover = new Rover($rover->getPosition()->getX(), $rover->getPosition()->getY(), $flippedDirectionMapper[$rover->getDirection()]);
         }
         return $newRover;
     }
 
     protected function move(Rover $rover,$command):Rover{
+        $x = $rover->getPosition()->getX();
+        $y = $rover->getPosition()->getY();
         if ($command === Command::FORWARD) {
             $movementMapper = array(
-                AbstractDirection::NORTH => new Rover($rover->getX(), $rover->getY() + 1, AbstractDirection::NORTH),
-                AbstractDirection::SOUTH => new Rover($rover->getX(), $rover->getY() - 1, AbstractDirection::SOUTH),
-                AbstractDirection::EAST => new Rover($rover->getX() + 1, $rover->getY(), AbstractDirection::EAST),
-                AbstractDirection::WEST => new Rover($rover->getX() - 1, $rover->getY(), AbstractDirection::WEST),
+                AbstractDirection::NORTH => new Rover($x, $y + 1, AbstractDirection::NORTH),
+                AbstractDirection::SOUTH => new Rover($x, $y - 1, AbstractDirection::SOUTH),
+                AbstractDirection::EAST => new Rover($x + 1, $y, AbstractDirection::EAST),
+                AbstractDirection::WEST => new Rover($x - 1, $y, AbstractDirection::WEST),
             );
         }
         if ($command === Command::BACKWARD) {
             $movementMapper = array(
-                AbstractDirection::NORTH => new Rover($rover->getX(), $rover->getY() - 1, AbstractDirection::NORTH),
-                AbstractDirection::SOUTH => new Rover($rover->getX(), $rover->getY() + 1, AbstractDirection::SOUTH),
-                AbstractDirection::EAST => new Rover($rover->getX() - 1, $rover->getY(), AbstractDirection::EAST),
-                AbstractDirection::WEST => new Rover($rover->getX() + 1, $rover->getY(), AbstractDirection::WEST),
+                AbstractDirection::NORTH => new Rover($x, $y - 1, AbstractDirection::NORTH),
+                AbstractDirection::SOUTH => new Rover($x, $y + 1, AbstractDirection::SOUTH),
+                AbstractDirection::EAST => new Rover($x - 1, $y, AbstractDirection::EAST),
+                AbstractDirection::WEST => new Rover($x + 1, $y, AbstractDirection::WEST),
             );
         }
         return $movementMapper[$rover->getDirection()];
     }
 
     public function checkRoverLimits(Rover $rover, Mars $mars):Rover{
-
-        if($rover->getX() < 1){
-            return new Rover($mars->getWidth(), $rover->getY(), $rover->getDirection());
-        }elseif($rover->getX() > $mars->getWidth()){
-            return new Rover(1, $rover->getY(), $rover->getDirection());
-        }elseif($rover->getY() < 1){
-            return new Rover($rover->getX(), $mars->getHeight(), $rover->getDirection());
-        }elseif($rover->getY() > $mars->getHeight()){
-            return new Rover($rover->getX(), 1, $rover->getDirection());
+        $x = $rover->getPosition()->getX();
+        $y = $rover->getPosition()->getY();
+        if($x < 1){
+            return new Rover($mars->getWidth(), $y, $rover->getDirection());
+        }elseif($x > $mars->getWidth()){
+            return new Rover(1, $y, $rover->getDirection());
+        }elseif($y < 1){
+            return new Rover($x, $mars->getHeight(), $rover->getDirection());
+        }elseif($y > $mars->getHeight()){
+            return new Rover($x, 1, $rover->getDirection());
         }
         return $rover;
     }
