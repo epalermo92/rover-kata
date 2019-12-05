@@ -24,9 +24,13 @@ class Game
     }
 
     public function play(string $command) {
-        $this->rover = $this->command->executeCommand($this->rover, $command);
-        echo " Actual Rover situation: \n -position" . $this->rover->getX() . $this->rover->getY() .
-            "\n -Facing direction: " . $this->rover->getDirection();
+        $this->rover = $this->command->executeCommand($this->rover, $command, $this->mars);
+        $this->showPosition();
+    }
+
+    public function showPosition(){
+        echo "\nActual Rover position:" . "\n\t\t\t\t\t\t- x: " . $this->rover->getX() . "\n\t\t\t\t\t\t- y: " . $this->rover->getY() .
+            "\n\t\t\t\t - Facing direction: " . $this->rover->getDirection() . "\n\n";
     }
 
     /**

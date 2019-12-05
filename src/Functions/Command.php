@@ -3,6 +3,7 @@
 namespace App\Functions;
 
 use App\Models\AbstractDirection;
+use App\Models\Mars;
 use App\Models\Rover;
 
 class Command extends AbstractDirection
@@ -17,7 +18,7 @@ class Command extends AbstractDirection
 
     public  $command;
 
-    public function executeCommand(Rover $rover, string $command):Rover
+    public function executeCommand(Rover $rover, string $command, Mars $mars):Rover
     {
         if ($this->checkCommand($command)) {
             $this->command = $command;
@@ -27,7 +28,7 @@ class Command extends AbstractDirection
         } elseif (($this->command === self::LEFT) || ($this->command === self::RIGHT)) {
             $rover = $this->turn($rover);
         }
-        return $rover;
+        return $this->checkRoverLimits($rover, $mars);
     }
 
     protected function turn(Rover $rover):Rover {
@@ -42,8 +43,8 @@ class Command extends AbstractDirection
             $newRover = new Rover($rover->getX(), $rover->getY(), $directionMapper[$rover->getDirection()]);
         }
         if ($this->command === self::RIGHT){
-            array_flip($directionMapper);
-            $newRover = new Rover($rover->getX(), $rover->getY(), $directionMapper[$rover->getDirection()]);
+            $flippedDirectionMapper = array_flip($directionMapper);
+            $newRover = new Rover($rover->getX(), $rover->getY(), $flippedDirectionMapper[$rover->getDirection()]);
         }
         return $newRover;
     }
@@ -65,8 +66,21 @@ class Command extends AbstractDirection
                 AbstractDirection::WEST => new Rover($rover->getX() + 1, $rover->getY(), AbstractDirection::WEST),
             );
         }
+        return $movementMapper[$rover->getDirection()];
+    }
 
-         return $movementMapper[$rover->getDirection()];
+    public function checkRoverLimits(Rover $rover, Mars $mars):Rover{
+
+        if($rover->getX() < 1){
+            return new Rover($mars->getWidth(), $rover->getY(), $rover->getDirection());
+        }elseif($rover->getX() > $mars->getWidth()){
+            return new Rover(1, $rover->getY(), $rover->getDirection());
+        }elseif($rover->getY() < 1){
+            return new Rover($rover->getX(), $mars->getHeight(), $rover->getDirection());
+        }elseif($rover->getY() > $mars->getHeight()){
+            return new Rover($rover->getX(), 1, $rover->getDirection());
+        }
+        return $rover;
     }
 
     /**
