@@ -14,7 +14,7 @@ class Checker
         return (
             ($first->getPosition()->getX() === $second->getPosition()->getX()) &&
             ($first->getPosition()->getY() === $second->getPosition()->getY()) &&
-            ($first->getDirection()->getDirection() === $second->getDirection()->getDirection())
+            ($first->getDirection()->getDirectionString() === $second->getDirection()->getDirectionString())
         );
     }
 

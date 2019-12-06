@@ -1,0 +1,137 @@
+[1mdiff --git a/src/Functions/Checker.php b/src/Functions/Checker.php[m
+[1mindex 2016086..287af1e 100644[m
+[1m--- a/src/Functions/Checker.php[m
+[1m+++ b/src/Functions/Checker.php[m
+[36m@@ -14,7 +14,7 @@[m [mclass Checker[m
+         return ([m
+             ($first->getPosition()->getX() === $second->getPosition()->getX()) &&[m
+             ($first->getPosition()->getY() === $second->getPosition()->getY()) &&[m
+[31m-            ($first->getDirection()->getDirection() === $second->getDirection()->getDirection())[m
+[32m+[m[32m            ($first->getDirection()->getDirectionString() === $second->getDirection()->getDirectionString())[m
+         );[m
+     }[m
+ [m
+[1mdiff --git a/src/Functions/Command.php b/src/Functions/Command.php[m
+[1mindex 46d21e0..c34369b 100644[m
+[1m--- a/src/Functions/Command.php[m
+[1m+++ b/src/Functions/Command.php[m
+[36m@@ -42,36 +42,36 @@[m [mclass Command extends AbstractCommand[m
+     {[m
+         if ($command->getCommand() === (new CommandL())->getCommand())[m
+         {[m
+[31m-            switch ($rover->getDirection()->getDirection())[m
+[32m+[m[32m            switch ($rover->getDirection()->getDirectionString())[m
+             {[m
+[31m-                case (new DirectionW())->getDirection():[m
+[32m+[m[32m                case (new DirectionW())->getDirectionString():[m
+                     return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new DirectionS());[m
+                     break;[m
+[31m-                case (new DirectionS())->getDirection():[m
+[32m+[m[32m                case (new DirectionS())->getDirectionString():[m
+                     return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new DirectionE());[m
+                     break;[m
+[31m-                case (new DirectionE())->getDirection():[m
+[32m+[m[32m                case (new DirectionE())->getDirectionString():[m
+                     return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new DirectionN());[m
+                     break;[m
+[31m-                case (new DirectionN())->getDirection():[m
+[32m+[m[32m                case (new DirectionN())->getDirectionString():[m
+                     return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new DirectionW());[m
+ [m
+             }[m
+         }[m
+         if ($command->getCommand() === (new CommandR())->getCommand())[m
+         {[m
+[31m-            switch ($rover->getDirection()->getDirection())[m
+[32m+[m[32m            switch ($rover->getDirection()->getDirectionString())[m
+             {[m
+[31m-                case (new DirectionS())->getDirection():[m
+[32m+[m[32m                case (new DirectionS())->getDirectionString():[m
+                     return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new DirectionW());[m
+                     break;[m
+[31m-                case (new DirectionE())->getDirection():[m
+[32m+[m[32m                case (new DirectionE())->getDirectionString():[m
+                     return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new DirectionS());[m
+                     break;[m
+[31m-                case (new DirectionN())->getDirection():[m
+[32m+[m[32m                case (new DirectionN())->getDirectionString():[m
+                     return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new DirectionE());[m
+                     break;[m
+[31m-                case (new DirectionW())->getDirection():[m
+[32m+[m[32m                case (new DirectionW())->getDirectionString():[m
+                     return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new DirectionN());[m
+             }[m
+         }[m
+[36m@@ -84,36 +84,36 @@[m [mclass Command extends AbstractCommand[m
+ [m
+         if ($command->getCommand() === (new CommandF())->getCommand())[m
+         {[m
+[31m-            switch ($rover->getDirection()->getDirection())[m
+[32m+[m[32m            switch ($rover->getDirection()->getDirectionString())[m
+             {[m
+[31m-                case (new DirectionN())->getDirection():[m
+[32m+[m[32m                case (new DirectionN())->getDirectionString():[m
+                     $newRover = new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY() + 1), new DirectionN());[m
+                     break;[m
+[31m-                case (new DirectionS())->getDirection():[m
+[32m+[m[32m                case (new DirectionS())->getDirectionString():[m
+                     $newRover = new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY() - 1), new DirectionS());[m
+                     break;[m
+[31m-                case (new DirectionE())->getDirection():[m
+[32m+[m[32m                case (new DirectionE())->getDirectionString():[m
+                     $newRover = new Rover(PositionBuilder::build($rover->getPosition()->getX() + 1, $rover->getPosition()->getY()), new DirectionE());[m
+                     break;[m
+[31m-                case (new DirectionW())->getDirection():[m
+[32m+[m[32m                case (new DirectionW())->getDirectionString():[m
+                     $newRover = new Rover(PositionBuilder::build($rover->getPosition()->getX() - 1, $rover->getPosition()->getY()), new DirectionW());[m
+             }[m
+         }[m
+ [m
+         if ($command->getCommand() === (new CommandB())->getCommand())[m
+         {[m
+[31m-            switch ($rover->getDirection()->getDirection())[m
+[32m+[m[32m            switch ($rover->getDirection()->getDirectionString())[m
+             {[m
+[31m-                case (new DirectionN())->getDirection():[m
+[32m+[m[32m                case (new DirectionN())->getDirectionString():[m
+                     $newRover = new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY() - 1), new DirectionN());[m
+                     break;[m
+[31m-                case (new DirectionS())->getDirection():[m
+[32m+[m[32m                case (new DirectionS())->getDirectionString():[m
+                     $newRover = new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY() + 1), new DirectionS());[m
+                     break;[m
+[31m-                case (new DirectionE())->getDirection():[m
+[32m+[m[32m                case (new DirectionE())->getDirectionString():[m
+                     $newRover = new Rover(PositionBuilder::build($rover->getPosition()->getX() - 1, $rover->getPosition()->getY()), new DirectionE());[m
+                     break;[m
+[31m-                case (new DirectionW())->getDirection():[m
+[32m+[m[32m                case (new DirectionW())->getDirectionString():[m
+                     $newRover = new Rover(PositionBuilder::build($rover->getPosition()->getX() + 1, $rover->getPosition()->getY()), new DirectionW());[m
+             }[m
+         }[m
+[1mdiff --git a/src/Functions/Game.php b/src/Functions/Game.php[m
+[1mindex 9a8bf1f..a678e9a 100644[m
+[1m--- a/src/Functions/Game.php[m
+[1m+++ b/src/Functions/Game.php[m
+[36m@@ -57,7 +57,7 @@[m [mclass Game[m
+     {[m
+         echo "\n\t\t\t\tActual Rover position: " .[m
+             '(' .$rover->getPosition()->getX() . ', ' . $rover->getPosition()->getY() . ')' .[m
+[31m-            "\n\t\t\t\tFacing direction: \t" . $rover->getDirection()->getDirection() . "\n\n";[m
+[32m+[m[32m            "\n\t\t\t\tFacing direction: \t" . $rover->getDirection()->getDirectionString() . "\n\n";[m
+     }[m
+ [m
+     public static function checkAndSetObstacles():array[m
+[1mdiff --git a/src/Models/AbstractDirection.php b/src/Models/AbstractDirection.php[m
+[1mindex e1f067f..bac625d 100644[m
+[1m--- a/src/Models/AbstractDirection.php[m
+[1m+++ b/src/Models/AbstractDirection.php[m
+[36m@@ -12,7 +12,7 @@[m [mabstract class AbstractDirection[m
+         $this-> direction = $direction;[m
+     }[m
+ [m
+[31m-    public function getDirection(): string[m
+[32m+[m[32m    public function getDirectionString(): string[m
+     {[m
+         return $this->direction;[m
+     }[m

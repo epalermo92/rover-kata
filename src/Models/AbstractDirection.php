@@ -12,7 +12,7 @@ abstract class AbstractDirection
         $this-> direction = $direction;
     }
 
-    public function getDirection(): string
+    public function getDirectionString(): string
     {
         return $this->direction;
     }

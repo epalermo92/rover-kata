@@ -57,7 +57,7 @@ class Game
     {
         echo "\n\t\t\t\tActual Rover position: " .
             '(' .$rover->getPosition()->getX() . ', ' . $rover->getPosition()->getY() . ')' .
-            "\n\t\t\t\tFacing direction: \t" . $rover->getDirection()->getDirection() . "\n\n";
+            "\n\t\t\t\tFacing direction: \t" . $rover->getDirection()->getDirectionString() . "\n\n";
     }
 
     public static function checkAndSetObstacles():array
