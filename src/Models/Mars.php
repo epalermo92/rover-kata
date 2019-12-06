@@ -9,14 +9,14 @@ class Mars
     private  $width;
     /** @var int  */
     private  $height;
-//    /** @var Position[] */
-//    private $obstacles;
+    /** @var Position[] */
+    private $obstacles;
 
-    public function __construct(int $width, int $height/*, $obstacles*/)
+    public function __construct(int $width, int $height, $obstacles)
     {
         $this->height = $height;
         $this->width = $width;
-//        $this->obstacles = $obstacles;
+        $this->obstacles = $obstacles;
     }
 
     public function getHeight(): int
@@ -29,8 +29,8 @@ class Mars
         return $this->width;
     }
 
-//    public function getObstacles(): array
-//    {
-//        return $this->obstacles;
-//    }
+    public function getObstacles(): array
+    {
+        return $this->obstacles;
+    }
 }

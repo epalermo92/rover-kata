@@ -20,7 +20,8 @@ class CommandBuilder
             'R' => new CommandR(),
             'L' => new CommandL(),
         ];
-        if (in_array($command, ['F', 'B', 'R', 'L']))
+
+        if (in_array($command, ['F', 'B', 'R', 'L', 'EXIT']))
         {
             return $commandMapper[$command];
         }
