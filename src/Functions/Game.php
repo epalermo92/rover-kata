@@ -10,15 +10,15 @@ class Game
 {
     public static function setGame():array
     {
-        echo "\nGame started!\n\nInserire la larghezza della griglia:\t";
+        echo "\nGame started!\n\nInsert Mars width:\t";
         $settings['width'] = readline();
-        echo "\nInserire l'altezza della griglia:\t";
+        echo "\nInsert Mars height:\t";
         $settings['height'] = readline();
-        echo "\nInserisci l'ascissa iniziale:\t\t";
+        echo "\nInsert starting x:\t\t";
         $settings['x'] = readline();
-        echo "\nInserisci l'ordinata iniziale:\t\t";
+        echo "\nInsert starting y:\t\t";
         $settings['y'] = readline();
-        echo "\nInserisci la direzione iniziale:\t";
+        echo "\nInsert starting direction:\t";
         $settings['startingDirection'] = readline();
 
         return $settings;
@@ -29,7 +29,7 @@ class Game
         self::showPosition($rover);
 
         do{
-            echo "Inserire il comando da eseguire:\n\n F: Step Forward\n B: Step Backward\n R: Turn Right\n L: Turn Left\n\n";
+            echo "Insert the command to execute:\n\n F: Step Forward\n B: Step Backward\n R: Turn Right\n L: Turn Left\n\n";
             $command = CommandBuilder::build(readline());
             $rover = self::newRound($command, $mars, $rover);
         }while($command !== 'exit');
@@ -43,7 +43,7 @@ class Game
 
         if (($rover) && ($newRover)) {
             if (Checker::isTheSameRover($rover, $newRover)) {
-                echo "\nOooops, sembra che tu abbia beccato un ostacolo, riprova con un'altro comando! \n";
+                echo "\nWhoops, you hit an obstacle, try another command! \n";
                 self::showPosition($rover);
                 return $rover;
             }
@@ -63,19 +63,19 @@ class Game
     public static function checkAndSetObstacles():array
     {
         echo "\n";
-        echo "Vuoi inserire ostacoli all'interno della griglia di gioco? (S|N):\t";
+        echo "Do you want to put any obstacle on Mars? (S|N):\t";
         $checkObstacles = readline();
         $i = 0;
         $c = 0;
         $obstacles = array();
         if ($checkObstacles === 'S') {
-            echo "\nQuanti ostacoli vuoi inserire? ";
+            echo "\nHow many? ";
             $i = readline();
             echo "\n";
             for ($c = 0; $c < $i; $c++) {
                 $obstacles[] = \App\Functions\PositionBuilder::build(
-                    (int)readline('Inserire la coordinata x del ' . ($c + 1) . '° ostacolo: '),
-                    (int)readline('Inserire la coordinata y del ' . ($c + 1) . '° ostacolo: '),
+                    (int)readline("Insert" . ($c + 1) . "° obstacle's x: "),
+                    (int)readline("Insert" . ($c + 1) . "° obstacle's y: "),
                     );
                 echo "\n";
             }

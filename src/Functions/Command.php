@@ -24,7 +24,7 @@ class Command extends AbstractCommand
 
         if ($command->getCommand() === (new CommandExit())->getCommand())
         {
-            exit('Grazie per aver giocato :)');
+            exit("Thanks for playing! \t");
         }
         if (($command->getCommand() === (new CommandF())->getCommand()) || ($command->getCommand() === (new CommandB())->getCommand()))
         {
