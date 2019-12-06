@@ -3,6 +3,7 @@
 namespace App\Functions;
 
 use App\Models\AbstractCommand;
+use App\Models\CommandExit;
 use App\Models\Mars;
 use App\Models\Rover;
 
@@ -39,6 +40,10 @@ class Game
 
     public static function newRound(AbstractCommand $command, Mars $mars, Rover $rover):Rover
     {
+        if (get_class($command) === CommandExit::class)
+        {
+            exit("Thanks for playing! \t");
+        }
         $newRover = Command::executeCommand($rover, $command, $mars);
 
         if (($rover) && ($newRover)) {
