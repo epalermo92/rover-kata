@@ -14,6 +14,7 @@ use App\Models\DirectionW;
 use App\Models\Mars;
 use App\Models\Position;
 use App\Models\Rover;
+use RuntimeException;
 
 class Command extends AbstractCommand
 {
@@ -26,8 +27,7 @@ class Command extends AbstractCommand
 //            CommandL::class => self::turn($rover, $command),
 //            CommandR::class => self::turn($rover, $command)
 //        ];
-        switch (get_class($command))
-        {
+        switch (get_class($command)) {
             case CommandB::class:
             case CommandF::class:
                 $newRover = self::move($rover, $mars, $command);
@@ -37,36 +37,11 @@ class Command extends AbstractCommand
                 $newRover = self::turn($rover, $command);
                 break;
             default:
-                throw  new \RuntimeException('Invalid Command.');
+                throw  new RuntimeException('Invalid Command.');
                 break;
         }
-        return Checker::checkRoverLimits(/*$commandSelector[get_class($command)]*/$newRover, $mars);
+        return Checker::checkRoverLimits(/*$commandSelector[($command->getCommand())]*/ $newRover, $mars);
     }
-
-
-    protected static function turn(Rover $rover, AbstractCommand $command): Rover
-    {
-        $relations = [
-            DirectionW::class => DirectionS::class,
-            DirectionS::class => DirectionE::class,
-            DirectionE::class => DirectionN::class,
-            DirectionN::class => DirectionW::class,
-        ];
-
-        if (get_class($command) === CommandR::class) {
-            $relations = array_flip($relations);
-        }
-
-        $newRover = [
-            DirectionW::class => new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), (new DirectionW)),
-            DirectionS::class => new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), (new DirectionN)),
-            DirectionE::class => new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), (new DirectionE)),
-            DirectionN::class => new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), (new DirectionS)),
-        ];
-
-        return $newRover[get_class($rover->getDirection())];
-    }
-
 
     protected static function move(Rover $rover, Mars $mars, AbstractCommand $command): Rover
     {
@@ -84,25 +59,12 @@ class Command extends AbstractCommand
             'BW' => new Rover(PositionBuilder::build($rover->getPosition()->getX() + $delta, $rover->getPosition()->getY()), DirectionBuilder::build($case[1])),
         ];
 
-        if ($mars->getObstacles()[0] !== null) {
-            if (self::meetsObstacles($newRover[$case]->getPosition(), $mars->getObstacles()))
-                return $rover;
+        if ($mars->getObstacles() && self::meetsObstacles($newRover[$case]->getPosition(), $mars->getObstacles())) {
+            return $rover;
         }
 
         return $newRover[$case];
     }
-
-
-    private static function meetsObstacles(Position $position, array $obstacles): bool
-    {
-        foreach ($obstacles as $obstacle) {
-            if (Checker::isTheSamePosition($position, $obstacle)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     public static function coordinatesCombination(string $case): int
     {
@@ -118,5 +80,38 @@ class Command extends AbstractCommand
         ];
 
         return $caseSelector[$case];
+    }
+
+    private static function meetsObstacles(Position $position, array $obstacles): bool
+    {
+        foreach ($obstacles as $obstacle) {
+            if (Checker::isTheSamePosition($position, $obstacle)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected static function turn(Rover $rover, AbstractCommand $command): Rover
+    {
+        $relations = [
+            DirectionW::class => DirectionS::class,
+            DirectionS::class => DirectionE::class,
+            DirectionE::class => DirectionN::class,
+            DirectionN::class => DirectionW::class,
+        ];
+
+        if (get_class($command) === CommandR::class) {
+            $relations = array_flip($relations);
+        }
+
+        $newRover = [
+            DirectionW::class => new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new $relations[get_class(new DirectionW())]),
+            DirectionS::class => new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new $relations[get_class(new DirectionS())]),
+            DirectionE::class => new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new $relations[get_class(new DirectionE())]),
+            DirectionN::class => new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new $relations[get_class(new DirectionN())]),
+        ];
+
+        return $newRover[get_class($rover->getDirection())];
     }
 }

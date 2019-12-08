@@ -3,10 +3,11 @@
 
 namespace App\Models;
 
-class Rover {
+class Rover
+{
 
-    /** @var Position  */
-    private  $position;
+    /** @var Position */
+    private $position;
     /** @var AbstractDirection */
     private $directionFacing;
 

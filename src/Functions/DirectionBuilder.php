@@ -9,10 +9,11 @@ use App\Models\DirectionE;
 use App\Models\DirectionN;
 use App\Models\DirectionS;
 use App\Models\DirectionW;
+use RuntimeException;
 
 class DirectionBuilder
 {
-    public static function build(string $direction):AbstractDirection
+    public static function build(string $direction): AbstractDirection
     {
         $directionMapper = [
             'N' => new DirectionN(),
@@ -25,11 +26,10 @@ class DirectionBuilder
             'w' => new DirectionW(),
         ];
 
-        if (in_array($direction,['N', 'n', 'S', 's', 'E', 'e', 'W', 'w']))
-        {
+        if (in_array($direction, ['N', 'n', 'S', 's', 'E', 'e', 'W', 'w'])) {
             return $directionMapper[$direction];
         }
 
-        throw new \RuntimeException('Invalid direction.');
+        throw new RuntimeException('Invalid direction.');
     }
 }

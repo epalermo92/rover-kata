@@ -6,9 +6,9 @@ namespace App\Models;
 
 class Position
 {
-    private  $x;
+    private $x;
 
-    private  $y;
+    private $y;
 
     public function __construct(int $x, int $y)
     {

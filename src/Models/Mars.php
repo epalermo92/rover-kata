@@ -5,10 +5,10 @@ namespace App\Models;
 
 class Mars
 {
-    /** @var int  */
-    private  $width;
-    /** @var int  */
-    private  $height;
+    /** @var int */
+    private $width;
+    /** @var int */
+    private $height;
     /** @var Position[] */
     private $obstacles;
 

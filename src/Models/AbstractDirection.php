@@ -9,7 +9,7 @@ abstract class AbstractDirection
 
     public function __construct(string $direction)
     {
-        $this-> direction = $direction;
+        $this->direction = $direction;
     }
 
     public function getDirectionString(): string
