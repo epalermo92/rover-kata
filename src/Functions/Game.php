@@ -2,10 +2,11 @@
 
 namespace App\Functions;
 
+use App\Functions\Builder\CommandBuilder;
+use App\Functions\Builder\PositionBuilder;
 use App\Models\AbstractCommand;
 use App\Models\CommandExit;
 use App\Models\CommandNo;
-use App\Models\CommandWrong;
 use App\Models\Mars;
 use App\Models\Rover;
 

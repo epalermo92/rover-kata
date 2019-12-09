@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Functions;
+namespace App\Functions\Builder;
 
 
 use App\Models\AbstractDirection;
@@ -9,7 +9,7 @@ use App\Models\DirectionE;
 use App\Models\DirectionN;
 use App\Models\DirectionS;
 use App\Models\DirectionW;
-use App\Models\DirectionWrong;
+
 
 class DirectionBuilder
 {
@@ -27,9 +27,9 @@ class DirectionBuilder
         ];
 
         if (in_array($direction, ['N', 'n', 'S', 's', 'E', 'e', 'W', 'w'])) {
-            return $directionMapper[$direction];
+            throw new \RuntimeException("Can't build the command.\t");
         }
+        return $directionMapper[$direction];
 
-        return new DirectionWrong();
     }
 }

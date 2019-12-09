@@ -4,6 +4,7 @@
 namespace App\Functions;
 
 
+use App\Functions\Builder\PositionBuilder;
 use App\Models\Mars;
 use App\Models\Position;
 use App\Models\Rover;

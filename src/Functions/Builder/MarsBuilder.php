@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace App\Functions;
+namespace App\Functions\Builder;
 
 
 use App\Models\Mars;

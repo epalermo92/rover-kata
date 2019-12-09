@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Functions;
+namespace App\Functions\Builder;
 
 
 use App\Models\AbstractCommand;
@@ -11,7 +11,6 @@ use App\Models\CommandF;
 use App\Models\CommandL;
 use App\Models\CommandNo;
 use App\Models\CommandR;
-use App\Models\CommandWrong;
 use App\Models\CommandYes;
 
 class CommandBuilder
@@ -36,9 +35,9 @@ class CommandBuilder
         ];
 
         if (in_array($command, ['F', 'f', 'B', 'b', 'R', 'r', 'L', 'l', 'N', 'n', 'Y', 'y', 'EXIT', 'exit'])) {
-            return $commandMapper[$command];
+            throw new \RuntimeException("Can't build the command.\t");
         }
 
-        return new CommandWrong();
+        return $commandMapper[$command];
     }
 }

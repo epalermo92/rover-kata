@@ -3,11 +3,11 @@
         "phpunit/phpunit": "^8.4"
     },
     "require": {
-        "ext-readline": "*"
+        "ext-readline": "*",
+        "widmogrod/php-functional": "^5.3"
     },
     "autoload": {
         "psr-4": { "App\\": "src/" },
         "files": []
     }
 }
-
