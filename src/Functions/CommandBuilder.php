@@ -11,8 +11,8 @@ use App\Models\CommandF;
 use App\Models\CommandL;
 use App\Models\CommandNo;
 use App\Models\CommandR;
+use App\Models\CommandWrong;
 use App\Models\CommandYes;
-use RuntimeException;
 
 class CommandBuilder
 {
@@ -39,6 +39,6 @@ class CommandBuilder
             return $commandMapper[$command];
         }
 
-        throw new RuntimeException("Invalid command.\n");
+        return new CommandWrong();
     }
 }
