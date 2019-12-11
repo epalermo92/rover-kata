@@ -21,7 +21,7 @@ class MarsBuilder
     public static function build(int $width, int $height, array $obstacles): Either
     {
         if ($width <= 0 || $height <= 0) {
-            return left("Can't build Mars, Width and Height must be positive.\t");
+            return left( new \RuntimeException("Can't build Mars, Width and Height must be positive."));
         }
 
         return right(new Mars($width, $height, $obstacles));

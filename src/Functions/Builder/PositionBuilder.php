@@ -19,7 +19,7 @@ class PositionBuilder
     public static function build(int $x, int $y): Either
     {
         if ($x < 0 || $y < 0) {
-            return left("Coordinates must be positive numbers.");
+            return left( new \RuntimeException('Coordinates must be positive numbers.'));
         }
 
         return right(new Position($x, $y));

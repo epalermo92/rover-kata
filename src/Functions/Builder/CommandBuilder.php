@@ -12,6 +12,7 @@ use App\Models\CommandL;
 use App\Models\CommandNo;
 use App\Models\CommandR;
 use App\Models\CommandYes;
+use RuntimeException;
 use Widmogrod\Monad\Either\Either;
 use function Widmogrod\Monad\Either\left;
 use function Widmogrod\Monad\Either\right;
@@ -20,7 +21,7 @@ class CommandBuilder
 {
     /**
      * @param string $command
-     * @return Either<string,AbstractCommand>
+     * @return Either<RuntimeException,AbstractCommand>
      */
     public static function build(string $command): Either
     {
@@ -42,7 +43,7 @@ class CommandBuilder
         ];
 
         if (!in_array($command, ['F', 'f', 'B', 'b', 'R', 'r', 'L', 'l', 'N', 'n', 'Y', 'y', 'EXIT', 'exit'])) {
-            return left("Can't build the command.\t");
+            return left( new \RuntimeException("Can't build the command."));
         }
 
         return right($commandMapper[$command]);

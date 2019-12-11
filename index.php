@@ -17,8 +17,9 @@ Game::play(
         Game::checkAndSetObstacles()
     )
         ->either(
-            static function ($string) {
-                throw new RuntimeException($string);
+            static function (\Exception $e) {
+                echo 'Input Error.' . $e->getMessage();
+
             },
             static function ($mars) {
                 return $mars;
@@ -30,8 +31,8 @@ Game::play(
             $settings['y'],
             )
             ->either(
-                static function (string $string) {
-                    echo $string;
+                static function (\Exception $e) {
+                    echo 'Input Error.' . $e->getMessage();
                 },
                 static function (Position $position) {
                     return $position;
@@ -39,8 +40,8 @@ Game::play(
             ),
         DirectionBuilder::build($settings['startingDirection'])
             ->either(
-                static function ($string) {
-                    throw new RuntimeException($string);
+                static function (\Exception $e) {
+                    echo 'Input Error.' . $e->getMessage();
                 },
                 static function ($direction) {
                     return $direction;

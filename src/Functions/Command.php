@@ -118,8 +118,8 @@ class Command extends AbstractCommand
             $y,
             )
             ->either(
-                static function (string $string){
-                    throw new \RuntimeException($string);
+                static function (\Exception $e) {
+                    echo 'Input Error.' . $e->getMessage();
                 },
                 static function (Position $position){
                     return $position;
@@ -131,8 +131,8 @@ class Command extends AbstractCommand
             $direction
             )
             ->either(
-                static function (string $string){
-                    throw new \RuntimeException($string);
+                static function (\Exception $e) {
+                    echo 'Input Error.' . $e->getMessage();
                 },
                 static function (AbstractDirection $direction){
                     return $direction;
