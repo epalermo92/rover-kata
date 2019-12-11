@@ -30,11 +30,11 @@ class Game
 
     public static function play(Mars $mars, Rover $rover): bool
     {
-        self::showPosition($rover);
+        self::showPosition($rover, $mars);
 
         do {
 
-            echo "Insert the command to execute:\n\n F: Step Forward\n B: Step Backward\n R: Turn Right\n L: Turn Left\n\n";
+            echo "Insert the command you want to execute:\n\n F: Step Forward\n B: Step Backward\n R: Turn Right\n L: Turn Left\n\n";
             $command = CommandBuilder::build(InputChecker::inputCommandFromTerminal())
             ->either(
                 static function ($string) {
@@ -50,11 +50,33 @@ class Game
         return true;
     }
 
-    public static function showPosition(Rover $rover)
+    public static function showPosition(Rover $rover, Mars $mars)
     {
+        $marsField = [$mars->getHeight()][$mars->getWidth()];
+
+        for ($c = 1; $c <= $mars->getWidth(); $c++)
+        {
+            for ($i = 1; $i <= $mars->getHeight(); $i++)
+            {
+                $marsField[$i][$c] = 'O';
+            }
+        }
+
+        $marsField[($rover->getPosition()->getY())][$rover->getPosition()->getX()] = 'X';
+
         echo "\n\t\t\t\tActual Rover position: " .
             '(' . $rover->getPosition()->getX() . ', ' . $rover->getPosition()->getY() . ')' .
             "\n\t\t\t\tFacing direction: \t" . $rover->getDirection()->getDirectionString() . "\n\n";
+
+        for ($c = $mars->getWidth(); $c >= 1; $c--)
+        {
+            echo "\t\t\t\t";
+            for ($i = 1; $i <= $mars->getHeight(); $i++)
+            {
+                echo ' ' . $marsField[$c][$i];
+            }
+            echo "\n";
+        }
     }
 
     public static function newRound(AbstractCommand $command, Mars $mars, Rover $rover): Rover
@@ -67,11 +89,11 @@ class Game
         if (($rover) && ($newRover)) {
             if (Checker::isTheSameRover($rover, $newRover)) {
                 echo "\nWhoops, you hit an obstacle, try another command! \n";
-                self::showPosition($rover);
+                self::showPosition($rover, $mars);
                 return $rover;
             }
 
-            self::showPosition($newRover);
+            self::showPosition($newRover, $mars);
             return $newRover;
         }
         return $rover;
