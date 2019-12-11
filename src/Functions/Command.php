@@ -44,14 +44,14 @@ class Command extends AbstractCommand
         $delta = self::coordinatesCombination($case);
 
         $newRover = [
-            'FN' => new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY() + $delta), DirectionBuilder::build($case[1])),
-            'FS' => new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY() + $delta), DirectionBuilder::build($case[1])),
-            'BN' => new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY() + $delta), DirectionBuilder::build($case[1])),
-            'BS' => new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY() + $delta), DirectionBuilder::build($case[1])),
-            'FE' => new Rover(PositionBuilder::build($rover->getPosition()->getX() + $delta, $rover->getPosition()->getY()), DirectionBuilder::build($case[1])),
-            'FW' => new Rover(PositionBuilder::build($rover->getPosition()->getX() + $delta, $rover->getPosition()->getY()), DirectionBuilder::build($case[1])),
-            'BE' => new Rover(PositionBuilder::build($rover->getPosition()->getX() + $delta, $rover->getPosition()->getY()), DirectionBuilder::build($case[1])),
-            'BW' => new Rover(PositionBuilder::build($rover->getPosition()->getX() + $delta, $rover->getPosition()->getY()), DirectionBuilder::build($case[1])),
+            'FN' => new Rover(self::buildPosition($rover->getPosition()->getX(), $rover->getPosition()->getY() + $delta), DirectionBuilder::build($case[1])),
+            'FS' => new Rover(self::buildPosition($rover->getPosition()->getX(), $rover->getPosition()->getY() + $delta), DirectionBuilder::build($case[1])),
+            'BN' => new Rover(self::buildPosition($rover->getPosition()->getX(), $rover->getPosition()->getY() + $delta), DirectionBuilder::build($case[1])),
+            'BS' => new Rover(self::buildPosition($rover->getPosition()->getX(), $rover->getPosition()->getY() + $delta), DirectionBuilder::build($case[1])),
+            'FE' => new Rover(self::buildPosition($rover->getPosition()->getX() + $delta, $rover->getPosition()->getY()), DirectionBuilder::build($case[1])),
+            'FW' => new Rover(self::buildPosition($rover->getPosition()->getX() + $delta, $rover->getPosition()->getY()), DirectionBuilder::build($case[1])),
+            'BE' => new Rover(self::buildPosition($rover->getPosition()->getX() + $delta, $rover->getPosition()->getY()), DirectionBuilder::build($case[1])),
+            'BW' => new Rover(self::buildPosition($rover->getPosition()->getX() + $delta, $rover->getPosition()->getY()), DirectionBuilder::build($case[1])),
         ];
 
         if ($mars->getObstacles() && self::meetsObstacles($newRover[$case]->getPosition(), $mars->getObstacles())) {
@@ -75,10 +75,10 @@ class Command extends AbstractCommand
         }
 
         $newRover = [
-            DirectionW::class => new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new $relations[get_class(new DirectionW())]),
-            DirectionS::class => new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new $relations[get_class(new DirectionS())]),
-            DirectionE::class => new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new $relations[get_class(new DirectionE())]),
-            DirectionN::class => new Rover(PositionBuilder::build($rover->getPosition()->getX(), $rover->getPosition()->getY()), new $relations[get_class(new DirectionN())]),
+            DirectionW::class => new Rover(self::buildPosition($rover->getPosition()->getX(), $rover->getPosition()->getY()), new $relations[get_class(new DirectionW())]),
+            DirectionS::class => new Rover(self::buildPosition($rover->getPosition()->getX(), $rover->getPosition()->getY()), new $relations[get_class(new DirectionS())]),
+            DirectionE::class => new Rover(self::buildPosition($rover->getPosition()->getX(), $rover->getPosition()->getY()), new $relations[get_class(new DirectionE())]),
+            DirectionN::class => new Rover(self::buildPosition($rover->getPosition()->getX(), $rover->getPosition()->getY()), new $relations[get_class(new DirectionN())]),
         ];
 
         return $newRover[get_class($rover->getDirection())];
@@ -108,5 +108,19 @@ class Command extends AbstractCommand
             }
         }
         return false;
+    }
+
+    public static function buildPosition(int $x, int $y):Position{
+        return PositionBuilder::build(
+            $x,
+            $y,
+            )
+            ->either(
+                static function (string $string){
+                    throw new \RuntimeException($string);
+                },
+                static function (Position $position){
+                    return $position;
+                });
     }
 }

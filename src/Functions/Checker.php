@@ -4,7 +4,6 @@
 namespace App\Functions;
 
 
-use App\Functions\Builder\PositionBuilder;
 use App\Models\Mars;
 use App\Models\Position;
 use App\Models\Rover;
@@ -28,16 +27,16 @@ class Checker
     public static function checkRoverLimits(Rover $rover, Mars $mars): Rover
     {
         if ($rover->getPosition()->getX() < 1) {
-            return new Rover(PositionBuilder::build($mars->getWidth(), $rover->getPosition()->getY()), $rover->getDirection());
+            return new Rover(Command::buildPosition($mars->getWidth(), $rover->getPosition()->getY()), $rover->getDirection());
         }
         if ($rover->getPosition()->getX() > $mars->getWidth()) {
-            return new Rover(PositionBuilder::build(1, $rover->getPosition()->getY()), $rover->getDirection());
+            return new Rover(Command::buildPosition(1, $rover->getPosition()->getY()), $rover->getDirection());
         }
         if ($rover->getPosition()->getY() < 1) {
-            return new Rover(PositionBuilder::build($rover->getPosition()->getX(), $mars->getHeight()), $rover->getDirection());
+            return new Rover(Command::buildPosition($rover->getPosition()->getX(), $mars->getHeight()), $rover->getDirection());
         }
         if ($rover->getPosition()->getY() > $mars->getHeight()) {
-            return new Rover(PositionBuilder::build($rover->getPosition()->getX(), 1), $rover->getDirection());
+            return new Rover(Command::buildPosition($rover->getPosition()->getX(), 1), $rover->getDirection());
         }
 
         return $rover;

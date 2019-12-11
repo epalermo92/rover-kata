@@ -82,9 +82,12 @@ class Game
         $i = InputChecker::inputIntFromTerminal();
         echo "\n";
         for ($c = 0; $c < $i; $c++) {
-            $obstacles[] = PositionBuilder::build(
-                InputChecker::inputIntFromTerminal('Insert ' . ($c + 1) . "° obstacle's x: "),
-                InputChecker::inputIntFromTerminal("Insert " . ($c + 1) . "° obstacle's y: "),
+            $x = InputChecker::inputIntFromTerminal('Insert ' . ($c + 1) . "° obstacle's x: ");
+            $y = InputChecker::inputIntFromTerminal('Insert ' . ($c + 1) . "° obstacle's y: ");
+
+            $obstacles[] = Command::buildPosition(
+                $x,
+                $y,
                 );
             echo "\n";
         }

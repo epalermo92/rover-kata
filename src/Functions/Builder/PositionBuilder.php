@@ -5,16 +5,23 @@ namespace App\Functions\Builder;
 
 
 use App\Models\Position;
-use RuntimeException;
+use Widmogrod\Monad\Either\Either;
+use function Widmogrod\Monad\Either\left;
+use function Widmogrod\Monad\Either\right;
 
 class PositionBuilder
 {
-    public static function build(int $x, int $y): Position
+    /**
+     * @param int $x
+     * @param int $y
+     * @return Either<string, Position>
+     */
+    public static function build(int $x, int $y): Either
     {
         if ($x < 0 || $y < 0) {
-            throw new RuntimeException("Can't build Position");
+            return left("Coordinates must be positive numbers.");
         }
 
-        return new Position($x, $y);
+        return right(new Position($x, $y));
     }
 }
