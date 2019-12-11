@@ -26,9 +26,11 @@ class Game
             'obstacles' => [
                 'x' => 4, 'y' => 2
             ],
-            'commnads' => [
+            'commands' => [
                 'F',
-                'B'
+                'B',
+                'R',
+                'L',
             ]
         ];
     }
@@ -36,11 +38,11 @@ class Game
     /**
      * @param Mars $mars
      * @param Rover $rover
-     * @param AbstractCommand[] $commnads
+     * @param AbstractCommand[] $commands
      *
      * @return Either
      */
-    public static function play(Mars $mars, Rover $rover, array $commnads): Either
+    public static function play(Mars $mars, Rover $rover, array $commands): Either
     {
         return right('ok');
 

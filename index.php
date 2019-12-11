@@ -1,12 +1,10 @@
 <?php
 
-use App\Functions\Builder\DirectionBuilder;
 use App\Functions\Builder\MarsBuilder;
 use App\Functions\Builder\PositionBuilder;
 use App\Functions\Builder\RoverBuilder;
 use App\Functions\Game;
 use App\Models\Mars;
-use App\Models\Position;
 use App\Models\Rover;
 use Widmogrod\Monad\Either;
 use function Widmogrod\Functional\bind;
@@ -61,10 +59,41 @@ $r = pipeline(
         }
     ),
     bind(
-
+        static function (array $param) use ($settings) : array {
+            $cmd = array_filter(
+                    $settings['commands'],
+                    static function (Either\Either $commands) : bool {
+                        return $commands instanceof Either\Right;
+                    }
+                );
+            $param[] = count( $settings['commands']) === count($cmd)
+                ?Either\left(new RuntimeException('Input error'))
+                :Either\right(
+                  array_map(
+                      static function (Either\Either $either) {
+                          return $either->extract();
+                      },
+                      $cmd
+                  )
+                );
+            return $param;
+        }
     ),
     bind(
-        function (array $in) {
+      static function (array $param) : array {
+          $cmds = [];
+          foreach ($param[array_key_last($param)] as $command) {
+              \App\Functions\Builder\CommandBuilder::build(
+                  $command
+              );
+              $cmds[] = $command;
+          }
+          $param[array_key_last($param)] = $cmds;
+          return $param;
+      }
+              ),
+    bind(
+        static function (array $in) {
             Game::play(...$in);
         }
     )
@@ -83,3 +112,6 @@ $r->either(
         echo 'ok';
     }
 );
+
+
+
