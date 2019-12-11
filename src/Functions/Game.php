@@ -35,7 +35,15 @@ class Game
         do {
 
             echo "Insert the command to execute:\n\n F: Step Forward\n B: Step Backward\n R: Turn Right\n L: Turn Left\n\n";
-            $command = CommandBuilder::build(InputChecker::inputCommandFromTerminal());
+            $command = CommandBuilder::build(InputChecker::inputCommandFromTerminal())
+            ->either(
+                static function ($string) {
+                    throw new \RuntimeException($string);
+                },
+                static function ($command) {
+                    return $command;
+                }
+            );
             $rover = self::newRound($command, $mars, $rover);
         } while ($command !== 'exit');
 
@@ -73,7 +81,15 @@ class Game
     {
         echo "\n";
         echo "Do you want to put any obstacle on Mars? (Y|N):\t";
-        $command = CommandBuilder::build(InputChecker::inputCommandFromTerminal());
+        $command = CommandBuilder::build(InputChecker::inputCommandFromTerminal())
+            ->either(
+                static function ($string) {
+                    throw new \RuntimeException($string);
+                },
+                static function ($command) {
+                    return $command;
+                }
+            );
         $obstacles = array();
         if (get_class($command) === CommandNo::class) {
             return [];
