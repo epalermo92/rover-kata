@@ -11,7 +11,15 @@ require_once 'vendor/autoload.php';
 
 $settings = Game::setGame();
 Game::play(
-    MarsBuilder::build($settings['width'], $settings['height'], Game::checkAndSetObstacles()),
+    MarsBuilder::build($settings['width'], $settings['height'], Game::checkAndSetObstacles())
+        ->either(
+            static function ($string) {
+                throw new RuntimeException($string);
+            },
+            static function ($mars) {
+                return $mars;
+            }
+        ),
     new Rover(
         PositionBuilder::build(
             $settings['x'],
@@ -23,6 +31,15 @@ Game::play(
                 },
                 static function (Position $position) {
                     return $position;
-                }),
-        DirectionBuilder::build($settings['startingDirection']))
+                }
+            ),
+        DirectionBuilder::build($settings['startingDirection'])
+            ->either(
+                static function ($string) {
+                    throw new RuntimeException($string);
+                },
+                static function ($direction) {
+                    return $direction;
+                }
+            ))
 );

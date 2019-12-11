@@ -9,11 +9,18 @@ use App\Models\DirectionE;
 use App\Models\DirectionN;
 use App\Models\DirectionS;
 use App\Models\DirectionW;
+use Widmogrod\Monad\Either\Either;
+use function Widmogrod\Monad\Either\left;
+use function Widmogrod\Monad\Either\right;
 
 
 class DirectionBuilder
 {
-    public static function build(string $direction): AbstractDirection
+    /**
+     * @param string $direction
+     * @return Either<string, AbstractDirection>
+     */
+    public static function build(string $direction): Either
     {
         $directionMapper = [
             'N' => new DirectionN(),
@@ -27,9 +34,9 @@ class DirectionBuilder
         ];
 
         if (!in_array($direction, ['N', 'n', 'S', 's', 'E', 'e', 'W', 'w'])) {
-            throw new \RuntimeException("Can't build the command.\t");
+            return left("Can't build the command.\t");
         }
-        return $directionMapper[$direction];
+        return right($directionMapper[$direction]);
 
     }
 }
