@@ -10,45 +10,58 @@ use App\Models\CommandExit;
 use App\Models\CommandNo;
 use App\Models\Mars;
 use App\Models\Rover;
+use Widmogrod\Monad\Either\Either;
+use function Widmogrod\Monad\Either\right;
 
 class Game
 {
-    public static function setGame(): array
+    public static function initGame(): array
     {
-        echo "\nGame started!\n\nInsert Mars width:\t";
-        $settings['width'] = InputChecker::inputIntFromTerminal();
-        echo "\nInsert Mars height:\t";
-        $settings['height'] = InputChecker::inputIntFromTerminal();
-        echo "\nInsert starting x:\t\t";
-        $settings['x'] = InputChecker::inputIntFromTerminal();
-        echo "\nInsert starting y:\t\t";
-        $settings['y'] = InputChecker::inputIntFromTerminal();
-        echo "\nInsert starting direction:\t";
-        $settings['startingDirection'] = InputChecker::inputDirectionFromTerminal();
-
-        return $settings;
+        return [
+            'width' => 6,
+            'height' => 6,
+            'x' => 4,
+            'y' => 4,
+            'startingDirection' => 'N',
+            'obstacles' => [
+                'x' => 4, 'y' => 2
+            ],
+            'commnads' => [
+                'F',
+                'B'
+            ]
+        ];
     }
 
-    public static function play(Mars $mars, Rover $rover): bool
+    /**
+     * @param Mars $mars
+     * @param Rover $rover
+     * @param AbstractCommand[] $commnads
+     *
+     * @return Either
+     */
+    public static function play(Mars $mars, Rover $rover, array $commnads): Either
     {
-        self::showPosition($rover, $mars);
+        return right('ok');
 
-        do {
-
-            echo "Insert the command you want to execute:\n\n F: Step Forward\n B: Step Backward\n R: Turn Right\n L: Turn Left\n\n";
-            $command = CommandBuilder::build(InputChecker::inputCommandFromTerminal())
-            ->either(
-                static function ($string) {
-                    throw new \RuntimeException($string);
-                },
-                static function ($command) {
-                    return $command;
-                }
-            );
-            $rover = self::newRound($command, $mars, $rover);
-        } while ($command !== 'exit');
-
-        return true;
+//        self::showPosition($rover, $mars);
+//
+//        do {
+//
+//            echo "Insert the command you want to execute:\n\n F: Step Forward\n B: Step Backward\n R: Turn Right\n L: Turn Left\n\n";
+//            $command = CommandBuilder::build(InputChecker::inputCommandFromTerminal())
+//            ->either(
+//                static function ($string) {
+//                    throw new \RuntimeException($string);
+//                },
+//                static function ($command) {
+//                    return $command;
+//                }
+//            );
+//            $rover = self::newRound($command, $mars, $rover);
+//        } while ($command !== 'exit');
+//
+//        return true;
     }
 
     public static function showPosition(Rover $rover, Mars $mars)
@@ -100,36 +113,4 @@ class Game
         return $rover;
     }
 
-    public static function checkAndSetObstacles(): array
-    {
-        echo "\n";
-        echo "Do you want to put any obstacle on Mars? (Y|N):\t";
-        $command = CommandBuilder::build(InputChecker::inputCommandFromTerminal())
-            ->either(
-                static function ($string) {
-                    throw new \RuntimeException($string);
-                },
-                static function ($command) {
-                    return $command;
-                }
-            );
-        $obstacles = array();
-        if (get_class($command) === CommandNo::class) {
-            return [];
-        }
-        echo "\nHow many obstacles ? ";
-        $i = InputChecker::inputIntFromTerminal();
-        echo "\n";
-        for ($c = 0; $c < $i; $c++) {
-            $x = InputChecker::inputIntFromTerminal('Insert ' . ($c + 1) . "° obstacle's x: ");
-            $y = InputChecker::inputIntFromTerminal('Insert ' . ($c + 1) . "° obstacle's y: ");
-
-            $obstacles[] = Command::buildPosition(
-                $x,
-                $y,
-                );
-            echo "\n";
-        }
-        return $obstacles;
-    }
 }

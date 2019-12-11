@@ -1,17 +1,12 @@
-<?php
-
+<?php declare(strict_types=1);
 
 namespace App\Functions\Builder;
 
-
 use App\Models\AbstractCommand;
 use App\Models\CommandB;
-use App\Models\CommandExit;
 use App\Models\CommandF;
 use App\Models\CommandL;
-use App\Models\CommandNo;
 use App\Models\CommandR;
-use App\Models\CommandYes;
 use RuntimeException;
 use Widmogrod\Monad\Either\Either;
 use function Widmogrod\Monad\Either\left;
@@ -19,33 +14,25 @@ use function Widmogrod\Monad\Either\right;
 
 class CommandBuilder
 {
+    public const COMMAND_MAP = [
+        'F' => CommandF::class,
+        'B' => CommandB::class,
+        'R' => CommandR::class,
+        'L' => CommandL::class,
+    ];
+
     /**
      * @param string $command
      * @return Either<RuntimeException,AbstractCommand>
      */
     public static function build(string $command): Either
     {
-        $commandMapper = [
-            'F' => (new CommandF()),
-            'f' => (new CommandF()),
-            'B' => (new CommandB()),
-            'b' => (new CommandB()),
-            'R' => (new CommandR()),
-            'r' => (new CommandR()),
-            'L' => (new CommandL()),
-            'l' => (new CommandL()),
-            'N' => (new CommandNo()),
-            'n' => (new CommandNo()),
-            'Y' => (new CommandYes()),
-            'y' => (new CommandYes()),
-            'EXIT' => (new CommandExit()),
-            'exit' => (new CommandExit()),
-        ];
+        $cleanCommand = strtoupper($command);
 
-        if (!in_array($command, ['F', 'f', 'B', 'b', 'R', 'r', 'L', 'l', 'N', 'n', 'Y', 'y', 'EXIT', 'exit'])) {
+        if (!array_key_exists($cleanCommand, self::COMMAND_MAP)) {
             return left( new \RuntimeException("Can't build the command."));
         }
 
-        return right($commandMapper[$command]);
+        return right(new (self::COMMAND_MAP[$cleanCommand]));
     }
 }
