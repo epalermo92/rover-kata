@@ -1,9 +1,9 @@
 <?php
 
-use App\Functions\DirectionBuilder;
+use App\Functions\Builder\DirectionBuilder;
 use App\Functions\Game;
-use App\Functions\MarsBuilder;
-use App\Functions\PositionBuilder;
+use App\Functions\Builder\MarsBuilder;
+use App\Functions\Builder\PositionBuilder;
 use App\Models\Rover;
 
 require_once 'vendor/autoload.php';

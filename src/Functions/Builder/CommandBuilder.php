@@ -34,7 +34,7 @@ class CommandBuilder
             'exit' => (new CommandExit()),
         ];
 
-        if (in_array($command, ['F', 'f', 'B', 'b', 'R', 'r', 'L', 'l', 'N', 'n', 'Y', 'y', 'EXIT', 'exit'])) {
+        if (!in_array($command, ['F', 'f', 'B', 'b', 'R', 'r', 'L', 'l', 'N', 'n', 'Y', 'y', 'EXIT', 'exit'])) {
             throw new \RuntimeException("Can't build the command.\t");
         }
 

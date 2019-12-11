@@ -26,7 +26,7 @@ class DirectionBuilder
             'w' => new DirectionW(),
         ];
 
-        if (in_array($direction, ['N', 'n', 'S', 's', 'E', 'e', 'W', 'w'])) {
+        if (!in_array($direction, ['N', 'n', 'S', 's', 'E', 'e', 'W', 'w'])) {
             throw new \RuntimeException("Can't build the command.\t");
         }
         return $directionMapper[$direction];
