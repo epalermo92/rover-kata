@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Functions;
+namespace App\Functions\Checker;
 
 
 class InputChecker

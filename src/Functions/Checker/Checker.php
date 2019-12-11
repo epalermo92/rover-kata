@@ -1,9 +1,10 @@
 <?php
 
 
-namespace App\Functions;
+namespace App\Functions\Checker;
 
 
+use App\Functions\Command;
 use App\Models\Mars;
 use App\Models\Position;
 use App\Models\Rover;

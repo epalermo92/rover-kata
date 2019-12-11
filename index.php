@@ -11,7 +11,11 @@ require_once 'vendor/autoload.php';
 
 $settings = Game::setGame();
 Game::play(
-    MarsBuilder::build($settings['width'], $settings['height'], Game::checkAndSetObstacles())
+    MarsBuilder::build(
+        $settings['width'],
+        $settings['height'],
+        Game::checkAndSetObstacles()
+    )
         ->either(
             static function ($string) {
                 throw new RuntimeException($string);

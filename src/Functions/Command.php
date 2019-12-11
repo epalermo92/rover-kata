@@ -4,6 +4,7 @@ namespace App\Functions;
 
 use App\Functions\Builder\DirectionBuilder;
 use App\Functions\Builder\PositionBuilder;
+use App\Functions\Checker\Checker;
 use App\Models\AbstractCommand;
 use App\Models\AbstractDirection;
 use App\Models\CommandB;
