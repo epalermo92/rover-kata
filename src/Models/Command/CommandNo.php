@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Models;
+namespace App\Models\Command;
 
 
 class CommandNo extends AbstractCommand

@@ -10,7 +10,6 @@ use App\Models\Rover;
 use FunctionalPHP\FantasyLand\Functor;
 use Widmogrod\Monad\Either;
 use function Widmogrod\Functional\bind;
-use function Widmogrod\Functional\fromIterable;
 use function Widmogrod\Functional\pipeline;
 use const Widmogrod\Functional\reThrow;
 
@@ -62,10 +61,21 @@ $r = pipeline(
         }
     ),
     bind(
-        static function (array $param) use ($settings): array {
-            $function = static function () use ($settings) : Either\Either {
+        static function (array $parameters) use ($settings) : array {
+            $parameters['commands'] = array_map(
+              static function (string $command) {
+                  return CommandBuilder::build($command);
+              },
+              $settings['commands']
+            );
+            return $parameters;
+        }
+    ),
+    bind(
+        static function (array $parameters) use ($settings): array {
+            $function = static function () use ($parameters, $settings) : Either\Either {
                 $cmd = array_filter(
-                    $settings['commands'],
+                    $parameters['commands'],
                     static function (Either\Either $commands): bool {
                         return $commands instanceof Either\Right;
                     }
@@ -81,22 +91,11 @@ $r = pipeline(
                     )
                     : Either\left(new RuntimeException('Input error'));
             };
-            $param['commands'] = $function();
-            return $param;
+            $param = $function();
+            $parameters['commands'] = $param;
+            return $parameters;
         }
     ),
-    bind(
-      static function (array $param) : array {
-          /** @var Either\Either[] $param */
-          $param['commands']->map(
-              function (Either\Right $command){
-                  CommandBuilder::build($command)->extract();
-              }
-          );
-          return $param;
-
-      }
-              ),
     bind(
         static function (array $in) {
             Game::play(...$in);
