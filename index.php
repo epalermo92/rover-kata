@@ -1,11 +1,13 @@
 <?php
 
+use App\Functions\Builder\CommandBuilder;
 use App\Functions\Builder\MarsBuilder;
 use App\Functions\Builder\PositionBuilder;
 use App\Functions\Builder\RoverBuilder;
 use App\Functions\Game;
 use App\Models\Mars;
 use App\Models\Rover;
+use FunctionalPHP\FantasyLand\Functor;
 use Widmogrod\Monad\Either;
 use function Widmogrod\Functional\bind;
 use function Widmogrod\Functional\pipeline;
@@ -47,7 +49,7 @@ $r = pipeline(
         }
     ),
     bind(
-        static function(Mars $mars) use ($settings) : \FunctionalPHP\FantasyLand\Functor {
+        static function(Mars $mars) use ($settings) : Functor {
             return RoverBuilder::build(
                 $settings['x'],
                 $settings['y'],
@@ -59,34 +61,35 @@ $r = pipeline(
         }
     ),
     bind(
-        static function (array $param) use ($settings) : array {
-            $cmd = array_filter(
+        static function (array $param) use ($settings): array {
+            $param['commands'] = static function () use ($settings) : Either\Either {
+                $cmd = array_filter(
                     $settings['commands'],
-                    static function (Either\Either $commands) : bool {
+                    static function (Either\Either $commands): bool {
                         return $commands instanceof Either\Right;
                     }
                 );
-            $param[] = count( $settings['commands']) === count($cmd)
-                ?Either\left(new RuntimeException('Input error'))
-                :Either\right(
-                  array_map(
-                      static function (Either\Either $either) {
-                          return $either->extract();
-                      },
-                      $cmd
-                  )
-                );
+                return count($settings['commands']) === count($cmd)
+                    ? Either\right(
+                        array_map(
+                            static function (Either\Either $either) {
+                                return $either->extract();
+                            },
+                            $cmd
+                        )
+                    )
+                    : Either\left(new RuntimeException('Input error'));
+            };
             return $param;
         }
     ),
     bind(
       static function (array $param) : array {
           $cmds = [];
-          foreach ($param[array_key_last($param)] as $command) {
-              \App\Functions\Builder\CommandBuilder::build(
+          foreach ($param['commands'] as $command) {
+              $cmds[] = CommandBuilder::build(
                   $command
-              );
-              $cmds[] = $command;
+              )->extract();
           }
           $param[array_key_last($param)] = $cmds;
           return $param;
