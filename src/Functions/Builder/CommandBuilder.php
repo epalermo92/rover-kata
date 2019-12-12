@@ -14,25 +14,26 @@ use function Widmogrod\Monad\Either\right;
 
 class CommandBuilder
 {
-    /**
+        public const COMMAND_MAP = [
+        'F' => CommandF::class,
+        'B' => CommandB::class,
+        'R' => CommandR::class,
+        'L' => CommandL::class,
+        ];
+/**
      * @param string[] $commands
      * @return Either<RuntimeException,AbstractCommand>
      */
     public static function build(array $commands): Either
     {
-        $commandMap = [
-            'F' => (new CommandF()),
-            'B' => (new CommandB()),
-            'R' => (new CommandR()),
-            'L' => (new CommandL()),
-        ];
         $arrayCommand = array_map(
-            static function ($command) use ($commandMap) {
-                if (!array_key_exists(strtoupper($command), $commandMap)) {
+            static function ($command) {
+                if (!array_key_exists(strtoupper($command), self::COMMAND_MAP)) {
                     return left(new \RuntimeException("Can't build the command."));
                 }
 
-                return $commandMap[strtoupper($command)];
+                $class = self::COMMAND_MAP[strtoupper($command)];
+                return new $class;
             },
             $commands
         );
