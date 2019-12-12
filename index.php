@@ -5,6 +5,7 @@ use App\Functions\Builder\MarsBuilder;
 use App\Functions\Builder\PositionBuilder;
 use App\Functions\Builder\RoverBuilder;
 use App\Functions\Game;
+use App\Models\Command\AbstractCommand;
 use App\Models\Mars;
 use App\Models\Rover;
 use FunctionalPHP\FantasyLand\Functor;
@@ -56,49 +57,52 @@ $r = pipeline(
                 $settings['startingDirection']
             )->map(
                 static function (Rover $rover) use ($mars): array {
-                return [$mars, $rover];
+                return [
+                    'mars' => $mars,
+                    'rover' => $rover
+                ];
             });
         }
     ),
     bind(
-        static function (array $parameters) use ($settings) : array {
-            $parameters['commands'] = array_map(
-              static function (string $command) {
-                  return CommandBuilder::build($command);
-              },
-              $settings['commands']
+        static function (array $parameters) use ($settings): Functor {
+            return CommandBuilder::build(
+                $settings['commands']
+            )->map(
+                static function (array $commands) use ($parameters): array {
+                    return [$parameters['mars'], $parameters['rover'], $commands];
+                }
             );
-            return $parameters;
         }
     ),
-    bind(
-        static function (array $parameters) use ($settings): array {
-            $function = static function () use ($parameters, $settings) : Either\Either {
-                $cmd = array_filter(
-                    $parameters['commands'],
-                    static function (Either\Either $commands): bool {
-                        return $commands instanceof Either\Right;
-                    }
-                );
-                return count($settings['commands']) === count($cmd)
-                    ? Either\right(
-                        array_map(
-                            static function (Either\Either $either) {
-                                return $either->extract();
-                            },
-                            $cmd
-                        )
-                    )
-                    : Either\left(new RuntimeException('Input error'));
-            };
-            $param = $function();
-            $parameters['commands'] = $param;
-            return $parameters;
-        }
-    ),
+//    bind(
+//        static function (array $parameters) use ($settings): array {
+//            $function = static function () use ($parameters, $settings) : Either\Either {
+//                $cmd = array_filter(
+//                    $parameters['commands'],
+//                    static function (Either\Either $commands): bool {
+//                        return $commands instanceof Either\Right;
+//                    }
+//                );
+//                return count($settings['commands']) === count($cmd)
+//                    ? Either\right(
+//                        array_map(
+//                            static function (Either\Either $either) {
+//                                return $either->extract();
+//                            },
+//                            $cmd
+//                        )
+//                    )
+//                    : Either\left(new RuntimeException('Input error'));
+//            };
+//            $param = $function();
+//            $parameters['commands'] = $param;
+//            return $parameters;
+//        }
+//    ),
     bind(
         static function (array $in) {
-            Game::play(...$in);
+            Game::play($in['mars'], $in['rover'], $in['commands']);
         }
     )
 )(
@@ -112,7 +116,7 @@ $r = pipeline(
 
 $r->either(
     reThrow,
-    function () {
+    static function () {
         echo 'ok';
     }
 );

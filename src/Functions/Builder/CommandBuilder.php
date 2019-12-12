@@ -15,10 +15,10 @@ use function Widmogrod\Monad\Either\right;
 class CommandBuilder
 {
     /**
-     * @param string $command
+     * @param string[] $commands
      * @return Either<RuntimeException,AbstractCommand>
      */
-    public static function build(string $command): Either
+    public static function build(array $commands): Either
     {
         $commandMap = [
             'F' => (new CommandF()),
@@ -26,12 +26,17 @@ class CommandBuilder
             'R' => (new CommandR()),
             'L' => (new CommandL()),
         ];
-        $cleanCommand = strtoupper($command);
+        $arrayCommand = array_map(
+            static function ($command) use ($commandMap) {
+                if (!array_key_exists(strtoupper($command), $commandMap)) {
+                    return left(new \RuntimeException("Can't build the command."));
+                }
 
-        if (!array_key_exists($cleanCommand, $commandMap)) {
-            return left( new \RuntimeException("Can't build the command."));
-        }
+                return $commandMap[strtoupper($command)];
+            },
+            $commands
+        );
 
-        return right($commandMap[$cleanCommand]);
+        return right($arrayCommand);
     }
 }
