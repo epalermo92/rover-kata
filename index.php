@@ -10,6 +10,7 @@ use App\Models\Rover;
 use FunctionalPHP\FantasyLand\Functor;
 use Widmogrod\Monad\Either;
 use function Widmogrod\Functional\bind;
+use function Widmogrod\Functional\fromIterable;
 use function Widmogrod\Functional\pipeline;
 use const Widmogrod\Functional\reThrow;
 
@@ -62,7 +63,7 @@ $r = pipeline(
     ),
     bind(
         static function (array $param) use ($settings): array {
-            $param['commands'] = static function () use ($settings) : Either\Either {
+            $function = static function () use ($settings) : Either\Either {
                 $cmd = array_filter(
                     $settings['commands'],
                     static function (Either\Either $commands): bool {
@@ -80,18 +81,20 @@ $r = pipeline(
                     )
                     : Either\left(new RuntimeException('Input error'));
             };
+            $param['commands'] = $function();
             return $param;
         }
     ),
     bind(
       static function (array $param) : array {
-          $cmds = [];
-          $array = $param['commands']->extract();
-          foreach ($array as $command) {
-              $cmds[] = CommandBuilder::build($command)->extract();
-          }
-          $param['commands'] = $cmds;
+          /** @var Either\Either[] $param */
+          $param['commands']->map(
+              function (Either\Right $command){
+                  CommandBuilder::build($command)->extract();
+              }
+          );
           return $param;
+
       }
               ),
     bind(
@@ -114,6 +117,3 @@ $r->either(
         echo 'ok';
     }
 );
-
-
-

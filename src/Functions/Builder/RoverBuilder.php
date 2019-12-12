@@ -2,7 +2,7 @@
 
 namespace App\Functions\Builder;
 
-use App\Models\AbstractDirection;
+use App\Models\Direction\AbstractDirection;
 use App\Models\Position;
 use App\Models\Rover;
 use Widmogrod\Monad\Either\Either;
