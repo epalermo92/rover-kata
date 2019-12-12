@@ -86,12 +86,11 @@ $r = pipeline(
     bind(
       static function (array $param) : array {
           $cmds = [];
-          foreach ($param['commands'] as $command) {
-              $cmds[] = CommandBuilder::build(
-                  $command
-              )->extract();
+          $array = $param['commands']->extract();
+          foreach ($array as $command) {
+              $cmds[] = CommandBuilder::build($command)->extract();
           }
-          $param[array_key_last($param)] = $cmds;
+          $param['commands'] = $cmds;
           return $param;
       }
               ),
@@ -103,7 +102,7 @@ $r = pipeline(
 )(
     array_map(
         static function (array $in): Either\Either {
-            return PositionBuilder::build(...$in);
+            return PositionBuilder::build($in['x'], $in['y']);
         },
         $settings['obstacles']
     )
