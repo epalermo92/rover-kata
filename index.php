@@ -102,7 +102,7 @@ $r = pipeline(
 //    ),
     bind(
         static function (array $in) {
-            Game::play($in['mars'], $in['rover'], $in['commands']);
+            Game::play(...$in);
         }
     )
 )(
