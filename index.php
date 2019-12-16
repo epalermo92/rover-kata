@@ -5,7 +5,6 @@ use App\Functions\Builder\MarsBuilder;
 use App\Functions\Builder\PositionBuilder;
 use App\Functions\Builder\RoverBuilder;
 use App\Functions\Game;
-use App\Models\Command\AbstractCommand;
 use App\Models\Mars;
 use App\Models\Rover;
 use FunctionalPHP\FantasyLand\Functor;
@@ -80,35 +79,34 @@ $r = pipeline(
         }
     ),
     bind(
-      static function (array $parameters) use ($settings): Functor {
-          $commandRight = array_filter(
-              $parameters['commands'],
-              static function (Either\Either $obstacle):bool {
-                  return $obstacle instanceof Either\Right;
-              }
-          );
-          return count($commandRight) === count($settings['commands'])
-              ? Either\right(
-                  static function () use ($parameters) {
-                      return array_map(
-                          static function (Either\Either $commands):Either\Either {
-                              return $commands->extract();
-                          },
-                          $parameters['commands']
-                      );
-                  }
-              )->map(
-                  static function (array $commands) use ($parameters) {
-                      $parameters['commands'] = $commands;
-                      return $parameters;
-                  }
-              )
-              : Either\left(new RuntimeException('Command input error.'));
-      }
+        static function (array $parameters) use ($settings): Functor {
+            $commandRight = array_filter(
+                $parameters['commands'],
+                static function (Either\Either $obstacle): bool {
+                    return $obstacle instanceof Either\Right;
+                }
+            );
+            return count($commandRight) === count($settings['commands'])
+                ? Either\right(
+                    array_map(
+                        static function (Either\Either $command) {
+                            return $command->extract();
+                        },
+                        $parameters['commands']
+                    )
+                )->map(
+                    static function ($commands) use ($parameters) {
+                        $parameters['commands'] = $commands;
+                        return $parameters;
+                    }
+                )
+                : Either\left(new RuntimeException('Command input error.'));
+        }
     ),
     bind(
         static function (array $in) {
-            Game::play(...$in);
+            var_dump($in);
+            Game::play($in['mars'], $in['rover'], $in['commands']);
         }
     )
 )(
@@ -122,7 +120,7 @@ $r = pipeline(
 
 $r->either(
     reThrow,
-    function () {
+    static function () {
         echo 'ok';
     }
 );
