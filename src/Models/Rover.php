@@ -3,6 +3,8 @@
 
 namespace App\Models;
 
+use App\Models\Direction\AbstractDirection;
+
 class Rover
 {
 

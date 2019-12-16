@@ -4,11 +4,11 @@
 namespace App\Functions\Builder;
 
 
-use App\Models\AbstractDirection;
-use App\Models\DirectionE;
-use App\Models\DirectionN;
-use App\Models\DirectionS;
-use App\Models\DirectionW;
+use App\Models\Direction\AbstractDirection;
+use App\Models\Direction\DirectionE;
+use App\Models\Direction\DirectionN;
+use App\Models\Direction\DirectionS;
+use App\Models\Direction\DirectionW;
 use Widmogrod\Monad\Either\Either;
 use function Widmogrod\Monad\Either\left;
 use function Widmogrod\Monad\Either\right;

@@ -104,7 +104,7 @@ $r = pipeline(
 )(
     array_map(
         static function (array $in): Either\Either {
-            return PositionBuilder::build(...$in);
+            return PositionBuilder::build($in['x'], $in['y']);
         },
         $settings['obstacles']
     )

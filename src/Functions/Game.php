@@ -24,7 +24,8 @@ class Game
             'y' => 4,
             'startingDirection' => 'N',
             'obstacles' => [
-                'x' => 4, 'y' => 2
+                ['x' => 4, 'y' => 2],
+                ['x' => 5, 'y' => 1],
             ],
             'commands' => [
                 'F',

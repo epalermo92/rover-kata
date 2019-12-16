@@ -2,11 +2,11 @@
 
 namespace App\Functions\Builder;
 
-use App\Models\AbstractCommand;
-use App\Models\CommandB;
-use App\Models\CommandF;
-use App\Models\CommandL;
-use App\Models\CommandR;
+use App\Models\Command\AbstractCommand;
+use App\Models\Command\CommandB;
+use App\Models\Command\CommandF;
+use App\Models\Command\CommandL;
+use App\Models\Command\CommandR;
 use RuntimeException;
 use Widmogrod\Monad\Either\Either;
 use function Widmogrod\Monad\Either\left;
