@@ -19,20 +19,32 @@ use App\Models\Mars;
 use App\Models\Position;
 use App\Models\Rover;
 use RuntimeException;
+use Widmogrod\Useful\PatternNotMatchedError;
+use function Widmogrod\Useful\match;
 
 class Command extends AbstractCommand
 {
 
-    public static function executeCommand(Rover $rover, AbstractCommand $command, Mars $mars): Rover
+    /**
+     * @param Mars $mars
+     * @param Rover $rover
+     * @param AbstractCommand[] $commands
+     * @return Rover
+     * @throws PatternNotMatchedError
+     */
+    public static function executeCommand(Mars $mars, Rover $rover, array $commands): Rover
     {
-        switch (get_class($command)) {
+        match($commands);
+
+
+        switch (get_class($commands)) {
             case CommandB::class:
             case CommandF::class:
-                return Checker::checkRoverLimits(self::move($rover, $mars, $command), $mars);
+                return Checker::checkRoverLimits(self::move($rover, $mars, $commands), $mars);
                 break;
             case CommandL::class:
             case CommandR::class:
-                return Checker::checkRoverLimits(self::turn($rover, $command), $mars);
+                return Checker::checkRoverLimits(self::turn($rover, $commands), $mars);
                 break;
             default:
                 throw  new RuntimeException('Invalid Command.');
