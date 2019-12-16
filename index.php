@@ -61,43 +61,44 @@ $r = pipeline(
         }
     ),
     bind(
-        static function (array $param) use ($settings): array {
-            $param['commands'] = static function () use ($settings) : Either\Either {
-                $cmd = array_filter(
-                    $settings['commands'],
-                    static function (Either\Either $commands): bool {
-                        return $commands instanceof Either\Right;
-                    }
-                );
-                return count($settings['commands']) === count($cmd)
-                    ? Either\right(
-                        array_map(
-                            static function (Either\Either $either) {
-                                return $either->extract();
-                            },
-                            $cmd
-                        )
-                    )
-                    : Either\left(new RuntimeException('Input error'));
-            };
-            return $param;
+        static function (array $parameters) use ($settings): array {
+            $parameters[] = array_map(
+                static function (array $in): Either\Either {
+                    return CommandBuilder::build(...$in);
+                },
+                $settings['commands']
+            );
+            return $parameters;
         }
     ),
     bind(
-      static function (array $param) : array {
-          $cmds = [];
-          foreach ($param['commands'] as $command) {
-              $cmds[] = CommandBuilder::build(
-                  $command
-              )->extract();
-          }
-          $param[array_key_last($param)] = $cmds;
-          return $param;
+      static function (array $parameters) use ($settings):Either\Either {
+          $commandRight = array_filter(
+              $parameters[array_key_last($parameters)],
+              static function (Either\Either $obstacle):bool {
+                  return $obstacle instanceof Either\Right;
+              }
+          );
+          return count($commandRight) === count($settings['commands'])
+              ?Either\Right(
+                  static function () use ($parameters) {
+                      $cmds = array_map(
+                          static function (Either\Right $commands):Either\Right {
+                              return $commands->extract();
+                          },
+                          $parameters[array_key_last($parameters)]
+                      );
+                      $parameters[array_key_last($parameters)] = $cmds;
+                      return $parameters;
+                  }
+              )
+              :Either\Left(new RuntimeException('Command input error.'));
       }
-              ),
+    ),
     bind(
-        static function (array $in) {
-            Game::play(...$in);
+        static function (Either\Either $in) {
+            $array = $in->extract();
+            Game::play(...$array);
         }
     )
 )(
