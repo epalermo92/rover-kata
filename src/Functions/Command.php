@@ -6,11 +6,11 @@ use App\Functions\Builder\DirectionBuilder;
 use App\Functions\Builder\PositionBuilder;
 use App\Functions\Checker\Checker;
 use App\Models\Command\AbstractCommand;
-use App\Models\Direction\AbstractDirection;
 use App\Models\Command\CommandB;
 use App\Models\Command\CommandF;
 use App\Models\Command\CommandL;
 use App\Models\Command\CommandR;
+use App\Models\Direction\AbstractDirection;
 use App\Models\Direction\DirectionE;
 use App\Models\Direction\DirectionN;
 use App\Models\Direction\DirectionS;
@@ -18,8 +18,6 @@ use App\Models\Direction\DirectionW;
 use App\Models\Mars;
 use App\Models\Position;
 use App\Models\Rover;
-use RuntimeException;
-use Widmogrod\Useful\PatternNotMatchedError;
 use function Widmogrod\Useful\match;
 
 class Command extends AbstractCommand
@@ -30,26 +28,31 @@ class Command extends AbstractCommand
      * @param Rover $rover
      * @param AbstractCommand[] $commands
      * @return Rover
-     * @throws PatternNotMatchedError
      */
     public static function executeCommand(Mars $mars, Rover $rover, array $commands): Rover
     {
-        match($commands);
 
-
-        switch (get_class($commands)) {
-            case CommandB::class:
-            case CommandF::class:
-                return Checker::checkRoverLimits(self::move($rover, $mars, $commands), $mars);
-                break;
-            case CommandL::class:
-            case CommandR::class:
-                return Checker::checkRoverLimits(self::turn($rover, $commands), $mars);
-                break;
-            default:
-                throw  new RuntimeException('Invalid Command.');
-                break;
-        }
+        return array_reduce(
+            $commands,
+            static function (Rover $rover, AbstractCommand $command) use ($mars) : Rover {
+                $patterns = [
+                    CommandF::class => static function () use ($mars, $rover, $command) {
+                        return Checker::checkRoverLimits(self::move($rover, $mars, $command), $mars);
+                    },
+                    CommandB::class => static function () use ($mars, $rover, $command) {
+                        return Checker::checkRoverLimits(self::move($rover, $mars, $command), $mars);
+                    },
+                    CommandL::class => static function () use ($mars, $rover, $command) {
+                        return Checker::checkRoverLimits(self::turn($rover, $command), $mars);
+                    },
+                    CommandR::class => static function () use ($mars, $rover, $command) {
+                        return Checker::checkRoverLimits(self::turn($rover, $command), $mars);
+                    },
+                ];
+                return match($patterns, $command);
+            },
+            $rover
+        );
     }
 
     protected static function move(Rover $rover, Mars $mars, AbstractCommand $command): Rover

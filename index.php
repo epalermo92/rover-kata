@@ -11,7 +11,6 @@ use FunctionalPHP\FantasyLand\Functor;
 use Widmogrod\Monad\Either;
 use function Widmogrod\Functional\bind;
 use function Widmogrod\Functional\pipeline;
-use const Widmogrod\Functional\reThrow;
 
 require_once 'vendor/autoload.php';
 
@@ -105,8 +104,10 @@ $r = pipeline(
     ),
     bind(
         static function (array $in) {
-            var_dump($in);
-            Game::play($in['mars'], $in['rover'], $in['commands']);
+            $newRover = Game::play($in['mars'], $in['rover'], $in['commands']);
+            return $newRover !== $in['rover']
+                ? Either\right($newRover)
+                : Either\left($newRover);
         }
     )
 )(
@@ -119,9 +120,12 @@ $r = pipeline(
 );
 
 $r->either(
-    reThrow,
-    static function () {
-        echo 'ok';
+    static function (Rover $oldRover) {
+        echo 'Whoops, you hit an obstacle!';
+        Game::roverStatus($oldRover);
+    },
+    static function (Rover $newRover) {
+        Game::roverStatus($newRover);
     }
 );
 
