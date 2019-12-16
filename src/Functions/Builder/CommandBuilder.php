@@ -27,12 +27,12 @@ class CommandBuilder
      */
     public static function build(string $command): Either
     {
-        $cleanCommand = strtoupper($command);
 
-        if (!array_key_exists($cleanCommand, self::COMMAND_MAP)) {
-            return left( new \RuntimeException("Can't build the command."));
+        if (!array_key_exists(strtoupper($command), self::COMMAND_MAP)) {
+            return left(new RuntimeException("Can't build the command."));
         }
 
-        return right(new (self::COMMAND_MAP[$cleanCommand]));
+        $class = self::COMMAND_MAP[strtoupper($command)];
+        return right(new $class);
     }
 }

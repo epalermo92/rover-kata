@@ -2,12 +2,7 @@
 
 namespace App\Functions;
 
-use App\Functions\Builder\CommandBuilder;
-use App\Functions\Checker\Checker;
-use App\Functions\Checker\InputChecker;
-use App\Models\AbstractCommand;
-use App\Models\CommandExit;
-use App\Models\CommandNo;
+use App\Models\Command\AbstractCommand;
 use App\Models\Mars;
 use App\Models\Rover;
 use Widmogrod\Monad\Either\Either;
@@ -46,7 +41,8 @@ class Game
     public static function play(Mars $mars, Rover $rover, array $commands): Either
     {
         return right('ok');
-
+    }
+}
 //        self::showPosition($rover, $mars);
 //
 //        do {
@@ -65,55 +61,50 @@ class Game
 //        } while ($command !== 'exit');
 //
 //        return true;
-    }
-
-    public static function showPosition(Rover $rover, Mars $mars)
-    {
-        $marsField = [$mars->getHeight()][$mars->getWidth()];
-
-        for ($c = 1; $c <= $mars->getWidth(); $c++)
-        {
-            for ($i = 1; $i <= $mars->getHeight(); $i++)
-            {
-                $marsField[$i][$c] = 'O';
-            }
-        }
-
-        $marsField[($rover->getPosition()->getY())][$rover->getPosition()->getX()] = 'X';
-
-        echo "\n\t\t\t\tActual Rover position: " .
-            '(' . $rover->getPosition()->getX() . ', ' . $rover->getPosition()->getY() . ')' .
-            "\n\t\t\t\tFacing direction: \t" . $rover->getDirection()->getDirectionString() . "\n\n";
-
-        for ($c = $mars->getWidth(); $c >= 1; $c--)
-        {
-            echo "\t\t\t\t";
-            for ($i = 1; $i <= $mars->getHeight(); $i++)
-            {
-                echo ' ' . $marsField[$c][$i];
-            }
-            echo "\n";
-        }
-    }
-
-    public static function newRound(AbstractCommand $command, Mars $mars, Rover $rover): Rover
-    {
-        if (get_class($command) === CommandExit::class) {
-            exit("Thanks for playing! \t");
-        }
-        $newRover = Command::executeCommand($rover, $command, $mars);
-
-        if (($rover) && ($newRover)) {
-            if (Checker::isTheSameRover($rover, $newRover)) {
-                echo "\nWhoops, you hit an obstacle, try another command! \n";
-                self::showPosition($rover, $mars);
-                return $rover;
-            }
-
-            self::showPosition($newRover, $mars);
-            return $newRover;
-        }
-        return $rover;
-    }
-
-}
+//    public static function showPosition(Rover $rover, Mars $mars)
+//    {
+//        $marsField = [$mars->getHeight()][$mars->getWidth()];
+//
+//        for ($c = 1; $c <= $mars->getWidth(); $c++)
+//        {
+//            for ($i = 1; $i <= $mars->getHeight(); $i++)
+//            {
+//                $marsField[$i][$c] = 'O';
+//            }
+//        }
+//
+//        $marsField[($rover->getPosition()->getY())][$rover->getPosition()->getX()] = 'X';
+//
+//        echo "\n\t\t\t\tActual Rover position: " .
+//            '(' . $rover->getPosition()->getX() . ', ' . $rover->getPosition()->getY() . ')' .
+//            "\n\t\t\t\tFacing direction: \t" . $rover->getDirection()->getDirectionString() . "\n\n";
+//
+//        for ($c = $mars->getWidth(); $c >= 1; $c--)
+//        {
+//            echo "\t\t\t\t";
+//            for ($i = 1; $i <= $mars->getHeight(); $i++)
+//            {
+//                echo ' ' . $marsField[$c][$i];
+//            }
+//            echo "\n";
+//        }
+//    }
+//    public static function newRound(AbstractCommand $command, Mars $mars, Rover $rover): Rover
+//    {
+//        if (get_class($command) === CommandExit::class) {
+//            exit("Thanks for playing! \t");
+//        }
+//        $newRover = Command::executeCommand($rover, $command, $mars);
+//
+//        if (($rover) && ($newRover)) {
+//            if (Checker::isTheSameRover($rover, $newRover)) {
+//                echo "\nWhoops, you hit an obstacle, try another command! \n";
+//                self::showPosition($rover, $mars);
+//                return $rover;
+//            }
+//
+//            self::showPosition($newRover, $mars);
+//            return $newRover;
+//        }
+//        return $rover;
+//    }
