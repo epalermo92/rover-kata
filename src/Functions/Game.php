@@ -35,7 +35,7 @@ class Game
             'y' => 4,
             'startingDirection' => 'N',
             'obstacles' => [
-                ['x' => 4, 'y' => 2],
+                ['x' => 4, 'y' => 3],
                 ['x' => 5, 'y' => 1],
             ],
             'commands' => [
@@ -63,7 +63,7 @@ class Game
 
         ];
 
-        return $cases[0];
+        return $cases[1];
     }
 
     public static function play(Mars $mars, Rover $rover, array $commands): Rover

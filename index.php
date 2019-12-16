@@ -4,6 +4,7 @@ use App\Functions\Builder\CommandBuilder;
 use App\Functions\Builder\MarsBuilder;
 use App\Functions\Builder\PositionBuilder;
 use App\Functions\Builder\RoverBuilder;
+use App\Functions\Checker\Checker;
 use App\Functions\Game;
 use App\Models\Mars;
 use App\Models\Rover;
@@ -103,11 +104,11 @@ $r = pipeline(
         }
     ),
     bind(
-        static function (array $in) {
+        static function (array $in): Either\Either {
             $newRover = Game::play($in['mars'], $in['rover'], $in['commands']);
-            return $newRover !== $in['rover']
+            return Checker::isTheSameRover($newRover, $in['rover'])
                 ? Either\right($newRover)
-                : Either\left($newRover);
+                : Either\left($in['rover']);
         }
     )
 )(

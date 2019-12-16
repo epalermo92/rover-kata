@@ -2,15 +2,12 @@
 
 namespace App\Functions;
 
-use App\Functions\Builder\DirectionBuilder;
-use App\Functions\Builder\PositionBuilder;
 use App\Functions\Checker\Checker;
 use App\Models\Command\AbstractCommand;
 use App\Models\Command\CommandB;
 use App\Models\Command\CommandF;
 use App\Models\Command\CommandL;
 use App\Models\Command\CommandR;
-use App\Models\Direction\AbstractDirection;
 use App\Models\Direction\DirectionE;
 use App\Models\Direction\DirectionN;
 use App\Models\Direction\DirectionS;
@@ -59,26 +56,25 @@ class Command extends AbstractCommand
     {
         $combination = $command->getCommand() . $rover->getDirection()->getDirectionString();
 
-        $direction = $rover->getDirection();
-        $x = $rover->getPosition()->getX();
-        $y = $rover->getPosition()->getY();
-
         $cases = [
-            'FN' => [$x, $y + 1],
-            'FS' => [$x, $y - 1],
-            'BN' => [$x, $y - 1],
-            'BS' => [$x, $y + 1],
-            'FE' => [$x + 1, $y],
-            'FW' => [$x - 1, $y],
-            'BE' => [$x - 1, $y],
-            'BW' => [$x + 1, $y],
+            'FN' => [0, 1],
+            'BS' => [0, 1],
+            'FS' => [0, - 1],
+            'BN' => [0, - 1],
+            'BW' => [1, 0],
+            'FE' => [1, 0],
+            'FW' => [- 1, 0],
+            'BE' => [- 1, 0],
         ];
 
         if ($mars->getObstacles() && self::meetsObstacles(new Position(...$cases[$combination]), $mars->getObstacles())) {
             return $rover;
         }
 
-        return new Rover(new Position(...$cases[$combination]),$direction);
+        return new Rover(new Position(
+            $rover->getPosition()->getX() + $cases[$combination][0],
+            $rover->getPosition()->getY() + $cases[$combination][1]),
+            $rover->getDirection());
     }
 
     protected static function turn(Rover $rover, AbstractCommand $command): Rover
