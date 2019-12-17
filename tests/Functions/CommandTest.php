@@ -5,9 +5,11 @@ namespace tests\Functions;
 use App\Functions\Command;
 use App\Models\Command\CommandB;
 use App\Models\Command\CommandF;
+use App\Models\Command\CommandL;
 use App\Models\Command\CommandR;
 use App\Models\Direction\DirectionE;
 use App\Models\Direction\DirectionN;
+use App\Models\Direction\DirectionW;
 use App\Models\Mars;
 use App\Models\Position;
 use App\Models\Rover;
@@ -54,7 +56,10 @@ class CommandTest extends TestCase
         ];
     }
 
-    public function testExecuteCommandTurn()
+    /**
+     * @dataProvider turnProvider
+     */
+    public function testExecuteCommandTurn($command, $initialDirection, $finalDirection): void
     {
         /** @var Position[] $obstacles */
         $obstacles = [
@@ -62,11 +67,19 @@ class CommandTest extends TestCase
         ];
 
         $mars = new Mars(4, 4, $obstacles);
-        $rover = new Rover(new Position(0, 0), new DirectionN());
+        $rover = new Rover(new Position(0, 0), $initialDirection);
         $result = Command::executeCommand($mars, $rover, [
-            new CommandR()
+            $command
         ]);
 
-        $this->assertSame(DirectionE::class, get_class($result->getDirection()));
+        $this->assertSame($finalDirection, get_class($result->getDirection()));
+    }
+
+    public function turnProvider(): array
+    {
+        return [
+            [new CommandR(), new DirectionN(), DirectionE::class],
+            [new CommandL(), new DirectionN(), DirectionW::class],
+        ];
     }
 }
