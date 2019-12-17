@@ -106,13 +106,13 @@ $r = pipeline(
         }
     ),
     bind(
-        static function (array $in): Result {
+        static function (array $in): Either\Either {
             $newRover = Game::play($in['mars'], $in['rover'], $in['commands']);
             if (Checker::isTheSameRover($newRover, $in['rover'])) {
-                return new Result($newRover, true);
+                return Either\right(new Result($newRover, true));
             }
 
-            return new Result($in['rover'], false);
+            return Either\left(new RuntimeException("Whoops, you hit an obstacle!"));
         }
     ),
     map(
@@ -137,8 +137,8 @@ $r->either(
     static function (RuntimeException $exception) {
         echo $exception->getMessage();
     },
-    static function (Rover $newRover) {
-        Game::roverStatus($newRover);
+    static function (Either\Either $newRover) {
+        Game::roverStatus(valueOf($newRover));
     }
 );
 
