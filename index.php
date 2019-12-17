@@ -12,6 +12,7 @@ use FunctionalPHP\FantasyLand\Functor;
 use Widmogrod\Monad\Either;
 use function Widmogrod\Functional\bind;
 use function Widmogrod\Functional\pipeline;
+use function Widmogrod\Functional\valueOf;
 
 require_once 'vendor/autoload.php';
 
@@ -31,7 +32,7 @@ $r = pipeline(
             ? Either\right(
                 array_map(
                     static function (Either\Either $either) {
-                        return $either->extract();
+                        return valueOf($either);
                     },
                     $obsRight
                 )
@@ -89,7 +90,7 @@ $r = pipeline(
                 ? Either\right(
                     array_map(
                         static function (Either\Either $command) {
-                            return $command->extract();
+                            return valueOf($command);
                         },
                         $parameters['commands']
                     )
