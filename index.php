@@ -7,6 +7,7 @@ use App\Functions\Builder\RoverBuilder;
 use App\Functions\Checker\Checker;
 use App\Functions\Game;
 use App\Models\Mars;
+use App\Models\Result;
 use App\Models\Rover;
 use FunctionalPHP\FantasyLand\Functor;
 use Widmogrod\Monad\Either;
@@ -105,16 +106,22 @@ $r = pipeline(
         }
     ),
     bind(
-        static function (array $in): Either\Either {
+        static function (array $in): Result {
             $newRover = Game::play($in['mars'], $in['rover'], $in['commands']);
-            return Checker::isTheSameRover($newRover, $in['rover'])
-                ? Either\right($newRover)
-                : Either\left($in['rover']);
+            if (Checker::isTheSameRover($newRover, $in['rover'])) {
+                return new Result($newRover, true);
+            }
+
+            return new Result($in['rover'], false);
         }
     ),
     map(
-        static function (Either\Either $either){
+        static function (Result $result){
+            if ($result->getResult() === true ) {
+                return Either\right($result->getRover());
+            }
 
+            return Either\left(new RuntimeException('Whoops, you hit an obstacle!'));
         }
     )
 )(
@@ -128,7 +135,6 @@ $r = pipeline(
 
 $r->either(
     static function (RuntimeException $exception) {
-        echo 'Whoops, you hit an obstacle!';
         echo $exception->getMessage();
     },
     static function (Rover $newRover) {

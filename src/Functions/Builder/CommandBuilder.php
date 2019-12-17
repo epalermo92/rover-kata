@@ -29,7 +29,7 @@ class CommandBuilder
     {
 
         if (!array_key_exists(strtoupper($command), self::COMMAND_MAP)) {
-            return left(new RuntimeException("Can't build the command."));
+            return left(new RuntimeException("Can't build the command.\n"));
         }
 
         $class = self::COMMAND_MAP[strtoupper($command)];

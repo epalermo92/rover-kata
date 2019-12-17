@@ -62,7 +62,7 @@ class Game
 
         ];
 
-        return $cases[1];
+        return $cases[0];
     }
 
     public static function play(Mars $mars, Rover $rover, array $commands): Rover
