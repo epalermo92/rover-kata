@@ -1,8 +1,9 @@
 <?php
 
-namespace Unit;
+namespace tests\Functions;
 
 use App\Functions\Command;
+use App\Models\Command\CommandB;
 use App\Models\Command\CommandF;
 use App\Models\Command\CommandR;
 use App\Models\Direction\DirectionE;
@@ -15,7 +16,10 @@ use PHPUnit\Framework\TestCase;
 class CommandTest extends TestCase
 {
 
-    public function testExecuteCommandMove()
+    /**
+     * @dataProvider CommandProvider
+     */
+    public function testExecuteCommandMove($command, $x, $y, $direction)
     {
         $mars = new Mars(
             8,
@@ -23,15 +27,31 @@ class CommandTest extends TestCase
             [new Position(1, 3), new Position(2, 5)]
         );
         $rover = new Rover(new Position(2, 2), new DirectionN());
-        $command = [new CommandF()];
+        $command = [new $command];
 
         $result = Command::executeCommand($mars, $rover, $command);
 
-        $this->assertSame(2, $result->getPosition()->getX());
-        $this->assertSame(3, $result->getPosition()->getY());
-        $this->assertSame(DirectionN::class, get_class($result->getDirection()));
+        $this->assertSame($x, $result->getPosition()->getX());
+        $this->assertSame($y, $result->getPosition()->getY());
+        $this->assertSame($direction, get_class($result->getDirection()));
+    }
 
-
+    public function CommandProvider(): array
+    {
+        return [
+            [
+                CommandF::class,
+                2,
+                3,
+                DirectionN::class
+            ],
+            [
+                CommandB::class,
+                2,
+                1,
+                DirectionN::class
+            ],
+        ];
     }
 
     public function testExecuteCommandTurn()
