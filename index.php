@@ -11,6 +11,7 @@ use App\Models\Rover;
 use FunctionalPHP\FantasyLand\Functor;
 use Widmogrod\Monad\Either;
 use function Widmogrod\Functional\bind;
+use function Widmogrod\Functional\map;
 use function Widmogrod\Functional\pipeline;
 use function Widmogrod\Functional\valueOf;
 
@@ -109,6 +110,11 @@ $r = pipeline(
             return Checker::isTheSameRover($newRover, $in['rover'])
                 ? Either\right($newRover)
                 : Either\left($in['rover']);
+        }
+    ),
+    map(
+        static function (Either\Either $either){
+
         }
     )
 )(

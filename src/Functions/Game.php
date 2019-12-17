@@ -29,8 +29,8 @@ class Game
             ],
             [   // Caso 1: hits obstacle
             'width' => 6,
-            'height' => 6,
-            'x' => -1,
+            'height' => -6,
+            'x' => 4,
             'y' => 4,
             'startingDirection' => 'N',
             'obstacles' => [
