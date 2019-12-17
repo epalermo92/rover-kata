@@ -121,9 +121,9 @@ $r = pipeline(
 );
 
 $r->either(
-    static function (Rover $oldRover) {
+    static function (RuntimeException $exception) {
         echo 'Whoops, you hit an obstacle!';
-        Game::roverStatus($oldRover);
+        echo $exception->getMessage();
     },
     static function (Rover $newRover) {
         Game::roverStatus($newRover);
