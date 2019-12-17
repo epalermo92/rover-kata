@@ -20,7 +20,6 @@ $settings = Game::initGame();
 /** @var Either\Either $r */
 $r = pipeline(
     static function (array $obstacles): Either\Either {
-
         $obsRight = array_filter(
             $obstacles,
             static function (Either\Either $obs): bool {
@@ -37,7 +36,7 @@ $r = pipeline(
                     $obsRight
                 )
             )
-            : Either\left(new \RuntimeException('fail parse obstacles'));
+            : Either\left(new RuntimeException('fail parse obstacles'));
     },
     bind(
         static function (array $obstacles) use ($settings): Either\Either {
@@ -49,18 +48,18 @@ $r = pipeline(
         }
     ),
     bind(
-        static function(Mars $mars) use ($settings) : Functor {
+        static function (Mars $mars) use ($settings) : Functor {
             return RoverBuilder::build(
                 $settings['x'],
                 $settings['y'],
                 $settings['startingDirection']
             )->map(
                 static function (Rover $rover) use ($mars): array {
-                return [
-                    'mars' => $mars,
-                    'rover' => $rover
-                ];
-            });
+                    return [
+                        'mars' => $mars,
+                        'rover' => $rover
+                    ];
+                });
         }
     ),
     bind(

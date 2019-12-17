@@ -9,6 +9,7 @@ use App\Models\Direction\DirectionE;
 use App\Models\Direction\DirectionN;
 use App\Models\Direction\DirectionS;
 use App\Models\Direction\DirectionW;
+use RuntimeException;
 use Widmogrod\Monad\Either\Either;
 use function Widmogrod\Monad\Either\left;
 use function Widmogrod\Monad\Either\right;
@@ -34,9 +35,9 @@ class DirectionBuilder
         ];
 
         if (!in_array($direction, ['N', 'n', 'S', 's', 'E', 'e', 'W', 'w'])) {
-            return left( new \RuntimeException("Can't build the command."));
+            return left(new RuntimeException("Can't build the command."));
         }
-        return right($directionMapper[$direction]);
 
+        return right($directionMapper[$direction]);
     }
 }

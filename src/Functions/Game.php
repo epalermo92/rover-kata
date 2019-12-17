@@ -2,7 +2,6 @@
 
 namespace App\Functions;
 
-use App\Models\Command\AbstractCommand;
 use App\Models\Mars;
 use App\Models\Rover;
 

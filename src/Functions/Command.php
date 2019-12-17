@@ -32,19 +32,17 @@ class Command extends AbstractCommand
         return array_reduce(
             $commands,
             static function (Rover $rover, AbstractCommand $command) use ($mars) : Rover {
+                $move = static function () use ($mars, $rover, $command) {
+                    return Checker::checkRoverLimits(self::move($rover, $mars, $command), $mars);
+                };
+                $turn = static function () use ($mars, $rover, $command) {
+                    return Checker::checkRoverLimits(self::turn($rover, $command), $mars);
+                };
                 $patterns = [
-                    CommandF::class => static function () use ($mars, $rover, $command) {
-                        return Checker::checkRoverLimits(self::move($rover, $mars, $command), $mars);
-                    },
-                    CommandB::class => static function () use ($mars, $rover, $command) {
-                        return Checker::checkRoverLimits(self::move($rover, $mars, $command), $mars);
-                    },
-                    CommandL::class => static function () use ($mars, $rover, $command) {
-                        return Checker::checkRoverLimits(self::turn($rover, $command), $mars);
-                    },
-                    CommandR::class => static function () use ($mars, $rover, $command) {
-                        return Checker::checkRoverLimits(self::turn($rover, $command), $mars);
-                    },
+                    CommandF::class => $move,
+                    CommandB::class => $move,
+                    CommandL::class => $turn,
+                    CommandR::class => $turn,
                 ];
                 return match($patterns, $command);
             },
