@@ -1,8 +1,6 @@
-<?php
-
+<?php declare(strict_types=1);
 
 namespace App\Models;
-
 
 use Widmogrod\Monad\Either\Either;
 
@@ -11,13 +9,17 @@ class Result
     /** @var Rover $rover */
     private $rover;
 
-    /** @var bool $result */
-    private $result;
+    /** @var Mars */
+    private $mars;
 
-    public function __construct(Rover $rover, bool $result)
+    /** @var bool $blocked */
+    private $blocked;
+
+    public function __construct(Rover $rover, Mars $mars, bool $blocked)
     {
-        $this->result = $result;
+        $this->blocked = $blocked;
         $this->rover = $rover;
+        $this->mars = $mars;
     }
 
     public function getRover(): Rover
@@ -25,8 +27,13 @@ class Result
         return $this->rover;
     }
 
-    public function getResult(): bool
+    public function isBlocked(): bool
     {
-        return $this->result;
+        return $this->blocked;
+    }
+
+    public function getMars(): Mars
+    {
+        return $this->mars;
     }
 }

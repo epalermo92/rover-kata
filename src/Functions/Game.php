@@ -3,7 +3,11 @@
 namespace App\Functions;
 
 use App\Models\Mars;
+use App\Models\Result;
 use App\Models\Rover;
+use Widmogrod\Primitive\Listt;
+use Widmogrod\Primitive\ListtCons;
+use function Widmogrod\Functional\fromIterable;
 
 class Game
 {
@@ -29,7 +33,7 @@ class Game
             ],
             [   // Caso 1: hits obstacle
             'width' => 6,
-            'height' => -6,
+            'height' => 6,
             'x' => 4,
             'y' => 4,
             'startingDirection' => 'N',
@@ -70,11 +74,30 @@ class Game
         return Command::executeCommand($mars, $rover, $commands);
     }
 
-    public static function roverStatus(Rover $rover):void {
-        echo 'Rover Status:';
-        echo "\n x:\t" . $rover->getPosition()->getX();
-        echo "\n y:\t" . $rover->getPosition()->getY();
-        echo "\n Direction:\t" . $rover->getDirection()->getDirectionString() . "\n";
+    public static function exec(Mars $mars, Rover $rover, array $commands): Result
+    {
+        return self::doExec(new Result($rover, $mars, false), fromIterable($commands));
+    }
+
+    private static function doExec(Result $result, Listt $commands): Result
+    {
+        if(!$commands instanceof ListtCons || $result->isBlocked()) {
+            return $result;
+        }
+
+        // elabora nuovo result con $commands->head() Command::executeCommand($mars, $rover, $commands);
+
+        return self::doExec($result, $commands->tail());
+    }
+
+    public static function serializeResult(Result $result) : string {
+        return sprintf(
+            "Rover Status: \n is blocked: %s \n X: %s \n Y: %s \n Direction: %s",
+            ($result->isBlocked() ? 'Y' : 'N'),
+            $result->getRover()->getPosition()->getX(),
+            $result->getRover()->getPosition()->getY(),
+            $result->getRover()->getDirection()->getDirectionString()
+        );
     }
 
 }

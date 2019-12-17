@@ -14,7 +14,12 @@ use App\Models\Direction\DirectionS;
 use App\Models\Direction\DirectionW;
 use App\Models\Mars;
 use App\Models\Position;
+use App\Models\Result;
 use App\Models\Rover;
+use Widmogrod\Primitive\Listt;
+use Widmogrod\Primitive\ListtCons;
+use Widmogrod\Primitive\ListtNil;
+use function Widmogrod\Functional\fromIterable;
 use function Widmogrod\Useful\match;
 
 class Command extends AbstractCommand
@@ -28,22 +33,25 @@ class Command extends AbstractCommand
      */
     public static function executeCommand(Mars $mars, Rover $rover, array $commands): Rover
     {
-
         return array_reduce(
             $commands,
             static function (Rover $rover, AbstractCommand $command) use ($mars) : Rover {
+
                 $move = static function () use ($mars, $rover, $command) {
                     return Checker::checkRoverLimits(self::move($rover, $mars, $command), $mars);
                 };
+
                 $turn = static function () use ($mars, $rover, $command) {
                     return Checker::checkRoverLimits(self::turn($rover, $command), $mars);
                 };
+
                 $patterns = [
                     CommandF::class => $move,
                     CommandB::class => $move,
                     CommandL::class => $turn,
                     CommandR::class => $turn,
                 ];
+
                 return match($patterns, $command);
             },
             $rover

@@ -15,6 +15,7 @@ use function Widmogrod\Functional\bind;
 use function Widmogrod\Functional\map;
 use function Widmogrod\Functional\pipeline;
 use function Widmogrod\Functional\valueOf;
+use function Widmogrod\Monad\IO\putStrLn;
 
 require_once 'vendor/autoload.php';
 
@@ -105,23 +106,9 @@ $r = pipeline(
                 : Either\left(new RuntimeException('Command input error.'));
         }
     ),
-    bind(
-        static function (array $in): Either\Either {
-            $newRover = Game::play($in['mars'], $in['rover'], $in['commands']);
-            if (Checker::isTheSameRover($newRover, $in['rover'])) {
-                return Either\right(new Result($newRover, true));
-            }
-
-            return Either\left(new RuntimeException("Whoops, you hit an obstacle!"));
-        }
-    ),
     map(
-        static function (Result $result){
-            if ($result->getResult() === true ) {
-                return Either\right($result->getRover());
-            }
-
-            return Either\left(new RuntimeException('Whoops, you hit an obstacle!'));
+        static function (array $in): Result {
+            return Game::exec($in['mars'], $in['rover'], $in['commands']);
         }
     )
 )(
@@ -133,14 +120,15 @@ $r = pipeline(
     )
 );
 
-$r->either(
-    static function (RuntimeException $exception) {
-        echo $exception->getMessage();
+putStrLn($r->either(
+    static function (RuntimeException $exception): string {
+        return $exception->getMessage();
     },
-    static function (Either\Either $newRover) {
-        Game::roverStatus(valueOf($newRover));
+    static function (Result $result): string {
+        return Game::serializeResult($result);
     }
-);
+))->run();
+
 
 
 
