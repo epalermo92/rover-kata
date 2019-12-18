@@ -15,7 +15,6 @@ use App\Models\Mars;
 use App\Models\Position;
 use App\Models\Result;
 use App\Models\Rover;
-use Widmogrod\Useful\PatternNotMatchedError;
 
 class Command extends AbstractCommand
 {
@@ -25,48 +24,49 @@ class Command extends AbstractCommand
      * @param Rover $rover
      * @param AbstractCommand $command
      * @return Result
-     * @throws PatternNotMatchedError
      */
     public static function executeCommand(Mars $mars, Rover $rover, AbstractCommand $command): Result
     {
-        if ($command instanceof CommandF || $command instanceof  CommandB){
-            $newRover = Checker::checkRoverLimits(self::move($rover, $mars, $command), $mars);
-            if (!Checker::isTheSamePosition($rover->getPosition(), $newRover->getPosition())){
-                return new Result($newRover, $mars, false);
+        if ($command instanceof CommandF || $command instanceof CommandB) {
+            $result = self::move($rover, $mars, $command);
+            if (!Checker::isTheSamePosition($rover->getPosition(), $result->getRover()->getPosition())) {
+                return $result;
             }
             return new Result($rover, $mars, true);
         }
 
-        return new Result(self::turn($rover, $command), $mars, false);
+        return self::turn($mars, $rover, $command);
 
     }
 
-    protected static function move(Rover $rover, Mars $mars, AbstractCommand $command): Rover
+    protected static function move(Rover $rover, Mars $mars, AbstractCommand $command): Result
     {
         $combination = $command->getCommand() . $rover->getDirection()->getDirectionString();
 
         $cases = [
             'FN' => [0, 1],
             'BS' => [0, 1],
-            'FS' => [0, - 1],
-            'BN' => [0, - 1],
+            'FS' => [0, -1],
+            'BN' => [0, -1],
             'BW' => [1, 0],
             'FE' => [1, 0],
-            'FW' => [- 1, 0],
-            'BE' => [- 1, 0],
+            'FW' => [-1, 0],
+            'BE' => [-1, 0],
         ];
 
-        if ($mars->getObstacles() && self::meetsObstacles(new Position(...$cases[$combination]), $mars->getObstacles())) {
-            return $rover;
+        $x = $rover->getPosition()->getX() + $cases[$combination][0];
+        $y = $rover->getPosition()->getY() + $cases[$combination][1];
+
+        foreach ($mars->getObstacles() as $obstacle) {
+            if ($mars->getObstacles() && Checker::isTheSamePosition(new Position($x, $y), $obstacle)) {
+                return new Result($rover, $mars, true);
+            }
         }
 
-        return new Rover(new Position(
-            $rover->getPosition()->getX() + $cases[$combination][0],
-            $rover->getPosition()->getY() + $cases[$combination][1]),
-            $rover->getDirection());
+        return new Result (new Rover(new Position($x, $y), $rover->getDirection()), $mars, false);
     }
 
-    protected static function turn(Rover $rover, AbstractCommand $command): Rover
+    protected static function turn(Mars $mars, Rover $rover, AbstractCommand $command): Result
     {
         $relations = [
             DirectionW::class => DirectionS::class,
@@ -79,16 +79,6 @@ class Command extends AbstractCommand
             $relations = array_flip($relations);
         }
 
-        return new Rover(new Position($rover->getPosition()->getX(), $rover->getPosition()->getY()), new $relations[get_class($rover->getDirection())]);
-    }
-
-    private static function meetsObstacles(Position $position, array $obstacles): bool
-    {
-        foreach ($obstacles as $obstacle) {
-            if (Checker::isTheSamePosition($position, $obstacle)) {
-                return true;
-            }
-        }
-        return false;
+        return new Result(new Rover(new Position($rover->getPosition()->getX(), $rover->getPosition()->getY()), new $relations[get_class($rover->getDirection())]), $mars, false);
     }
 }

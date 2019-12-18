@@ -5,7 +5,8 @@ use App\Functions\Builder\MarsBuilder;
 use App\Functions\Builder\PositionBuilder;
 use App\Functions\Builder\RoverBuilder;
 use App\Functions\Checker\Checker;
-use App\Functions\Game;
+use App\Functions\GamePlay;
+use App\Models\Game;
 use App\Models\Mars;
 use App\Models\Result;
 use App\Models\Rover;
@@ -19,10 +20,10 @@ use function Widmogrod\Monad\IO\putStrLn;
 
 require_once 'vendor/autoload.php';
 
-$settings = Game::initGame();
+$settings = GamePlay::initGame();
 
-/** @var Either\Either $r */
-$r = pipeline(
+/** @var Either\Either $pipelineResult */
+$pipelineResult = pipeline(
     static function (array $obstacles): Either\Either {
         $obsRight = array_filter(
             $obstacles,
@@ -58,33 +59,29 @@ $r = pipeline(
                 $settings['y'],
                 $settings['startingDirection']
             )->map(
-                static function (Rover $rover) use ($mars): array {
-                    return [
-                        'mars' => $mars,
-                        'rover' => $rover
-                    ];
+                static function (Rover $rover) use ($mars): Game {
+                    return new Game($mars, $rover, null);
                 });
         }
     ),
     bind(
-        static function (array $parameters) use ($settings): Functor {
+        static function (Game $game) use ($settings): Functor {
             return Either\right(array_map(
                 static function (string $in): Either\Either {
                     return CommandBuilder::build($in);
                 },
                 $settings['commands']
             ))->map(
-                static function (array $commands) use ($parameters) {
-                    $parameters['commands'] = $commands;
-                    return $parameters;
+                static function (array $commands) use ($game) {
+                    return new Game($game->getMars(), $game->getRover(), $commands);
                 }
             );
         }
     ),
     bind(
-        static function (array $parameters) use ($settings): Functor {
+        static function (Game $game) use ($settings): Functor {
             $commandRight = array_filter(
-                $parameters['commands'],
+                $game->getCommands(),
                 static function (Either\Either $obstacle): bool {
                     return $obstacle instanceof Either\Right;
                 }
@@ -95,37 +92,36 @@ $r = pipeline(
                         static function (Either\Either $command) {
                             return valueOf($command);
                         },
-                        $parameters['commands']
+                        $game->getCommands()
                     )
                 )->map(
-                    static function ($commands) use ($parameters) {
-                        $parameters['commands'] = $commands;
-                        return $parameters;
+                    static function ($commands) use ($game) {
+                        return new Game($game->getMars(), $game->getRover(), $commands);
                     }
                 )
                 : Either\left(new RuntimeException('Command input error.'));
         }
     ),
     map(
-        static function (array $in): Result {
-            return Game::exec($in['mars'], $in['rover'], $in['commands']);
+        static function (Game $game): Result {
+            return GamePlay::exec($game);
         }
     )
 )(
     array_map(
-        static function (array $in): Either\Either {
-            return PositionBuilder::build($in['x'], $in['y']);
+        static function (array $inputData): Either\Either {
+            return PositionBuilder::build($inputData['x'], $inputData['y']);
         },
         $settings['obstacles']
     )
 );
 
-putStrLn($r->either(
+putStrLn($pipelineResult->either(
     static function (RuntimeException $exception): string {
         return $exception->getMessage();
     },
     static function (Result $result): string {
-        return Game::serializeResult($result);
+        return GamePlay::serializeResult($result);
     }
 ))->run();
 

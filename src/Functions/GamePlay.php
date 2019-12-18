@@ -2,6 +2,7 @@
 
 namespace App\Functions;
 
+use App\Models\Game;
 use App\Models\Mars;
 use App\Models\Result;
 use App\Models\Rover;
@@ -9,12 +10,12 @@ use Widmogrod\Primitive\Listt;
 use Widmogrod\Primitive\ListtCons;
 use function Widmogrod\Functional\fromIterable;
 
-class Game
+class GamePlay
 {
     public static function initGame(): array
     {
         $cases = [
-            [   // Caso 0: Final position (4,2), Direction: N
+            [   // Caso 0: Final position (5,3), Direction: N
             'width' => 6,
             'height' => 6,
             'x' => 4,
@@ -26,8 +27,8 @@ class Game
             ],
             'commands' => [
                 'B',
-                'B',
                 'R',
+                'F',
                 'L',
             ]
             ],
@@ -46,7 +47,7 @@ class Game
                 'B',
             ]
             ],
-            [   // Caso 2: Position (1,4) Direction: N
+            [   // Caso 2: Position (6,4) Direction: N
             'width' => 6,
             'height' => 6,
             'x' => 4,
@@ -66,12 +67,12 @@ class Game
 
         ];
 
-        return $cases[0];
+        return $cases[2];
     }
 
-    public static function exec(Mars $mars, Rover $rover, array $commands): Result
+    public static function exec(Game $game): Result
     {
-        return self::doExec(new Result($rover, $mars, false), fromIterable($commands));
+        return self::doExec(new Result($game->getRover(), $game->getMars(), false), fromIterable($game->getCommands()));
     }
 
     private static function doExec(Result $result, Listt $commands): Result
@@ -88,7 +89,7 @@ class Game
     public static function serializeResult(Result $result) : string {
         return sprintf(
             "Rover Status: \n is blocked: %s \n X: %s \n Y: %s \n Direction: %s",
-            ($result->isBlocked() ? 'Y' : 'N'),
+            ($result->isBlocked() ? 'Yes' : 'No'),
             $result->getRover()->getPosition()->getX(),
             $result->getRover()->getPosition()->getY(),
             $result->getRover()->getDirection()->getDirectionString()
