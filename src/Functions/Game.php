@@ -14,7 +14,7 @@ class Game
     public static function initGame(): array
     {
         $cases = [
-            [   // Caso 0: Final position (4,4), Direction: N
+            [   // Caso 0: Final position (4,2), Direction: N
             'width' => 6,
             'height' => 6,
             'x' => 4,
@@ -25,7 +25,7 @@ class Game
                 ['x' => 5, 'y' => 1],
             ],
             'commands' => [
-                'F',
+                'B',
                 'B',
                 'R',
                 'L',
@@ -66,12 +66,7 @@ class Game
 
         ];
 
-        return $cases[1];
-    }
-
-    public static function play(Mars $mars, Rover $rover, array $commands): Rover
-    {
-        return Command::executeCommand($mars, $rover, $commands);
+        return $cases[0];
     }
 
     public static function exec(Mars $mars, Rover $rover, array $commands): Result
@@ -84,8 +79,7 @@ class Game
         if(!$commands instanceof ListtCons || $result->isBlocked()) {
             return $result;
         }
-
-        // elabora nuovo result con $commands->head() Command::executeCommand($mars, $rover, $commands);
+        $result = Command::executeCommand($result->getMars(), $result->getRover(), $commands->head());
 
         return self::doExec($result, $commands->tail());
     }

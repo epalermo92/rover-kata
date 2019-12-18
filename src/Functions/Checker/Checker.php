@@ -10,12 +10,11 @@ use App\Models\Rover;
 
 class Checker
 {
-    public static function isTheSamePosition(Rover $first, Rover $second): bool
+    public static function isTheSamePosition(Position $first, Position $second): bool
     {
         return (
-            ($first->getPosition()->getX() === $second->getPosition()->getX()) &&
-            ($first->getPosition()->getY() === $second->getPosition()->getY()) &&
-            ($first->getDirection()->getDirectionString() === $second->getDirection()->getDirectionString())
+            ($first->getX() === $second->getX()) &&
+            ($first->getY() === $second->getY())
         );
     }
 
