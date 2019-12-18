@@ -1,30 +1,12 @@
-phpunit setup
-==========
+# Mars Rover Kata PHP
 
-This is a simple bootstrap project for PHP with phpunit
+Implementig [Mars Rover Kata](https://kata-log.rocks/mars-rover-kata) in PHP using Functional Programming.
 
-For PHP 7.1 or above just run:
+## How execute script with Docker
+From outside the project folder,type:  
 
-```
-./composer install
+```docker run -ti -v $(pwd):/code -w /code php:cli bash```
+    
+From inside the project folder,type:  
 
-```
-
-To run the tests just run:
-
-```
-phpunit tests
-```
-You need PHP 7.1 or above.
-
-
-If you have legacy version of php please change composer.json file
-and include the version that is compatible with you version of PHP
-
-
-If you change the phpunit version do not forget to run:
-
-```
-./composer update --with-dependencies
-
-```
+```php index.php```
