@@ -81,4 +81,18 @@ class CommandTest extends TestCase
             [new CommandL(), new DirectionN(), DirectionW::class],
         ];
     }
+
+    public function testMeetsObstacle(): void
+    {
+        /** @var Position[] $obstacles */
+        $obstacles = [
+            new Position(0, 1)
+        ];
+
+        $mars = new Mars(4, 4, $obstacles);
+        $rover = new Rover(new Position(0, 0), new DirectionN());
+        $result = Command::executeCommand($mars, $rover, new CommandF());
+
+        $this->assertSame($rover->getPosition(), $result->getRover()->getPosition());
+    }
 }
