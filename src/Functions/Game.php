@@ -79,6 +79,7 @@ class Game
         if(!$commands instanceof ListtCons || $result->isBlocked()) {
             return $result;
         }
+
         $result = Command::executeCommand($result->getMars(), $result->getRover(), $commands->head());
 
         return self::doExec($result, $commands->tail());

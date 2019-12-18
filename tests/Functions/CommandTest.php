@@ -19,6 +19,7 @@ class CommandTest extends TestCase
 {
 
     /**
+     *
      * @dataProvider CommandProvider
      */
     public function testExecuteCommandMove($command, $x, $y, $direction)
@@ -29,13 +30,13 @@ class CommandTest extends TestCase
             [new Position(1, 3), new Position(2, 5)]
         );
         $rover = new Rover(new Position(2, 2), new DirectionN());
-        $command = [new $command];
+        $command = new $command;
 
         $result = Command::executeCommand($mars, $rover, $command);
 
-        $this->assertSame($x, $result->getPosition()->getX());
-        $this->assertSame($y, $result->getPosition()->getY());
-        $this->assertSame($direction, get_class($result->getDirection()));
+        $this->assertSame($x, $result->getRover()->getPosition()->getX());
+        $this->assertSame($y, $result->getRover()->getPosition()->getY());
+        $this->assertSame($direction, get_class($result->getRover()->getDirection()));
     }
 
     public function CommandProvider(): array
@@ -68,11 +69,9 @@ class CommandTest extends TestCase
 
         $mars = new Mars(4, 4, $obstacles);
         $rover = new Rover(new Position(0, 0), $initialDirection);
-        $result = Command::executeCommand($mars, $rover, [
-            $command
-        ]);
+        $result = Command::executeCommand($mars, $rover, $command);
 
-        $this->assertSame($finalDirection, get_class($result->getDirection()));
+        $this->assertSame($finalDirection, get_class($result->getRover()->getDirection()));
     }
 
     public function turnProvider(): array
